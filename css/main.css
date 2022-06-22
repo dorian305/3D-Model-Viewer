@@ -1,8 +1,93 @@
 body {
     margin: 0;
+    position: relative;
+}
+
+h1, h2, h3, h4, h5 {
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    color: white;
+    text-align: center;
 }
 
 canvas {
     width: 100vw;
     height: 100vh;
+}
+
+div#controls-wrapper {
+    font-family: 'AT Open Sans';
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 500px;
+    height: auto;
+}
+
+div.section {
+}
+
+div.section-heading {
+    display: flex;
+    height: 20px;
+    padding: 5px;
+    justify-content: center;
+    align-items: center;
+    background-color: #3375c7;
+    color: #062448;
+    border: 1px solid #142c4a;
+    border-bottom: none;
+    font-size: 15pt;
+}
+
+div.section-content {
+    display: flex;
+    justify-content: center;
+    background-color: #242424;
+}
+
+button {
+    display: block;
+    width: 100%;
+    height: 35px;
+    margin: 5px;
+    outline-style: none;
+    border: none;
+    color: white;
+    background-color: #363636;
+    font-size: 12pt;
+    transition: filter 200ms;
+    font-family: 'AT Open Sans';
+}
+
+input[type="number"] {
+    display: block;
+    width: 100%;
+    height: 35px;
+    text-align: center;
+    font-family: 'AT Open Sans';
+    font-size: 12pt;
+    margin: 5px;
+    outline: none;
+    color: white;
+    background-color: #363636;
+}
+
+button:hover {
+    filter: brightness(125%);
+}
+
+button#rotateX {
+    background-color: #9f0000;
+}
+
+button#rotateY {
+    background-color: #009f02;
+}
+
+button#rotateZ {
+    background-color: #00259f;
 }

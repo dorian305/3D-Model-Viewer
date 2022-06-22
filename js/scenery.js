@@ -1,161 +1,239 @@
-requirejs(['js/three'], function(THREE) {
-    'use strict';
+import * as THREE from "three";
+import { OrbitControls } from "OrbitControls";
+import { OBJLoader } from "OBJLoader";
+import { MTLLoader } from "MTLLoader";
+import { FBXLoader } from "FBXLoader";
+import { STLLoader } from "STLLoader";
 
-    // Setting some variables
-    const rotationCoefficient = 0.05; // How fast will the model rotate on the given axis
+// System variables
+let model = null;
+let enableRotationX = false;
+let enableRotationY = false;
+let enableRotationZ = false;
+let rotationSpeedX = 0;
+let rotationSpeedY = 0;
+let rotationSpeedZ = 0;
+let displayAxes = true;
 
-    // Model rotation variables
-    let rotationX = 0; // Model rotation on X axis in degrees
-    let rotationY = 0; // Model rotation on Y axis in degrees
-    let oldX = 0; // Mouse last X position
-    let oldY = 0; // Mouse last Y position
-    let mouseDown = false; // Grabbed a model by mouse down event
+/*
+    Setting up the scenery
+*/
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
+const pointLight = new THREE.PointLight(0xffffff, 0.8);
+const renderer = new THREE.WebGLRenderer();
+const controls = new OrbitControls(camera, renderer.domElement);
+const axes = new THREE.AxesHelper();
 
-    // Camera variables
-    let cameraZoom = 5; // Camera zoom level
-    let cameraZoomIncrement = 0.25; // Zooming step
+camera.add(pointLight);
+camera.position.set(0.5, 0.5, 0.5);
+controls.update()
 
-    // Model variables
-    let modelColor = "purple";
+document.body.appendChild(renderer.domElement);
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Geometry edges variables
-    let geometryEdgesColor = "white"; // Color of the geometry edges
-    let showGeometryEdges = false; // Show or hide model geometry edges
+scene.add(ambientLight);
+scene.add(camera);
+if (displayAxes) scene.add(axes);
 
-    // Wireframe variables
-    let wireframeOpacity = 1;
-    let showWireframe = true;
-    
-    /*
-        Scenery setup
-    */
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.position.z = cameraZoom; // Camera zoom level
-    document.body.appendChild(renderer.domElement); // Appending renderer element to the document
+/*
+    Model loading
+*/
+// const fbxloader = new FBXLoader();
+// fbxloader.load(
+//     '../models/mercedes.fbx',
+//     object => {
+//         scene.add(object);
+//         model = object;
 
-    /*
-        Model creation
-    */
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({color: modelColor});
-    const model = new THREE.Mesh(geometry, material);
-    scene.add(model); // Adding model to the scene
+//         // Reading whether model contains child meshes
+//         // If so, append the parts to the control panel
+//         object.traverse(child => {
+//             if (child instanceof THREE.Mesh){
+//                 const elem = document.createElement('input');
+//                 elem.setAttribute("type", "checkbox");
+//                 document.getElementById("parts").appendChild(elem);
+//             }
+//         });
+//     },
+//     xhr => {
+//         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+//     },
+//     error => {
+//         console.log(`Error occured: ${error}`);
+//     }
+// );
 
-    /*
-        Geometry edges
-    */
-    const edges = new THREE.EdgesGeometry(geometry);
-    const geometryEdges = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: geometryEdgesColor}));
-    if (showGeometryEdges){
-        scene.add(geometryEdges);
+const objloader = new OBJLoader();
+objloader.load(
+    '../models/camion.obj',
+    object => {
+        scene.add(object);
+        model = object;
+
+        // Reading whether model contains child meshes
+        // If so, append the parts to the control panel
+        object.traverse(child => {
+            if (child instanceof THREE.Mesh){
+                const elem = document.createElement('input');
+                elem.setAttribute("type", "checkbox");
+                document.getElementById("parts").appendChild(elem);
+            }
+        });
+    },
+    xhr => {
+        console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+    },
+    error => {
+        console.log(`Error occured: ${error}`);
     }
+);
 
-    /*
-        Wireframe
-    */
-    const wireframe = new THREE.WireframeGeometry(geometry);
-    const wireframeLines = new THREE.LineSegments(wireframe);
-    wireframeLines.material.depthTest = false;
-    wireframeLines.material.opacity = wireframeOpacity;
-    wireframeLines.material.transparent = true;
-    if (showWireframe){
-        scene.add(wireframeLines);
-    }
+// /*
+//     Geometry edges
+// */
+// const edges = new THREE.EdgesGeometry(model);
+// const geometryEdges = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: geometryEdgesColor}));
+// if (showGeometryEdges){
+//     scene.add(geometryEdges);
+// }
 
-    /*
-        Model manipulation
-    */
-    renderer.domElement.addEventListener('mousedown', e => mouseDown = true);
-    renderer.domElement.addEventListener('mouseup', e => mouseDown = false);
-    renderer.domElement.addEventListener("mouseleave", e => mouseDown = false);
+// /*
+//     Wireframe
+// */
+// const wireframe = new THREE.WireframeGeometry(model);
+// const wireframeLines = new THREE.LineSegments(wireframe);
+// wireframeLines.material.depthTest = false;
+// wireframeLines.material.opacity = wireframeOpacity;
+// wireframeLines.material.transparent = true;
+// if (showWireframe){
+//     scene.add(wireframeLines);
+// }
 
-    // Toggling model properties
-    window.addEventListener("keypress", e => {
+// // Toggling model properties
+// window.addEventListener("keypress", e => {
 
-        // Geometry edges
-        if (e.key.toLowerCase() === "e"){
-            showGeometryEdges = !showGeometryEdges;
-            showGeometryEdges ? scene.add(geometryEdges) : scene.remove(geometryEdges);
-        }
+//     // Geometry edges
+//     if (e.key.toLowerCase() === "e"){
+//         showGeometryEdges = !showGeometryEdges;
+//         showGeometryEdges ? scene.add(geometryEdges) : scene.remove(geometryEdges);
+//     }
 
-        // Wireframe
-        if (e.key.toLowerCase() === "w"){
-            showWireframe = !showWireframe;
-            showWireframe ? scene.add(wireframeLines) : scene.remove(wireframeLines);
-        }
-    });
+//     // Wireframe
+//     if (e.key.toLowerCase() === "w"){
+//         showWireframe = !showWireframe;
+//         showWireframe ? scene.add(wireframeLines) : scene.remove(wireframeLines);
+//     }
+// });
 
-    // Zoomming in / out the model
-    renderer.domElement.addEventListener("wheel", e => {
-        // Mouse wheel scroll Down (Zoom in)
-        if (Math.sign(e.deltaY) > 0){
-            cameraZoom += cameraZoomIncrement;
-        }
-        // Mouse wheel scroll Up (Zoom out)
-        else if (Math.sign(e.deltaY) < 0){
-            // Allow zooming in up to the distance of 1
-            if (cameraZoom > 1){
-                cameraZoom -= cameraZoomIncrement;
-            }
-        }
+// Scene rendering
+const animate = () => {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
 
-        // Update new camera position
-        camera.position.z = cameraZoom;
-    });
+    // Rotating the model on X Y and Z axes
+    if (enableRotationX) model.rotation.x += rotationSpeedX;
+    if (enableRotationY) model.rotation.y += rotationSpeedY;
+    if (enableRotationZ) model.rotation.z += rotationSpeedZ;
 
-    // Rotating model with mouse while left click is pressed
-    renderer.domElement.addEventListener('mousemove', e => {
-        // Rotation happens only if the mouse is pressed down
-        if (mouseDown){
+    // Displaying camera positions
+    document.getElementById("cameraPosX").value = camera.position.x.toFixed(2);
+    document.getElementById("cameraPosY").value = camera.position.y.toFixed(2);
+    document.getElementById("cameraPosZ").value = camera.position.z.toFixed(2);
+}
+animate(); // Start rendering
 
-            // ROTATION AROUND THE Y AXIS WHEN MOUSE MOVES LEFT AND RIGHT
-            if (e.pageX > oldX){
-                model.rotation.y += rotationCoefficient;
-                geometryEdges.rotation.y += rotationCoefficient;
-                wireframeLines.rotation.y += rotationCoefficient;
-                
-                rotationX = model.rotation.x;
-            }
-            else if (e.pageX < oldX){
-                model.rotation.y -= rotationCoefficient;
-                geometryEdges.rotation.y -= rotationCoefficient;
-                wireframeLines.rotation.y -= rotationCoefficient;
-                
-                rotationX = model.rotation.x;
-            }
-            
-            // ROTATION AROUND THE x AXIS WHEN MOUSE MOVES UP AND DOWN
-            if (e.pageY > oldY){
-                model.rotation.x += rotationCoefficient;
-                geometryEdges.rotation.x += rotationCoefficient;
-                wireframeLines.rotation.x += rotationCoefficient;
-                
-                rotationY = model.rotation.y;
-            }
-            else if (e.pageY < oldY){
-                model.rotation.x -= rotationCoefficient;
-                geometryEdges.rotation.x -= rotationCoefficient;
-                wireframeLines.rotation.x -= rotationCoefficient;
 
-                rotationY = model.rotation.y;
-            }
-
-            oldX = e.pageX;
-            oldY = e.pageY;
-        }
-    });
-
-    // Scene rendering
-    const animate = () => {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-
-        // console.log(`Zoom level: ${cameraZoom}`);
-        // console.log(`Rotation X: ${rotationX}rad`);
-        // console.log(`Rotation Y: ${rotationY}rad`);
-    }
-    animate(); // Start rendering
+/*
+    Axes controls
+*/
+// Fetching rotation speed X
+document.getElementById("rotationSpeedX").addEventListener("input", e => {
+    rotationSpeedX = e.target.value === "" ? 0 : parseFloat(e.target.value);
 });
+// Rotate along X axis
+document.getElementById("rotateX").addEventListener("click", e => {
+    if (rotationSpeedX != 0) enableRotationX = !enableRotationX;
+});
+// Resetting rotation on X
+document.getElementById("resetRotationX").addEventListener("click", e => {
+    model.rotation.x = 0;
+    rotationSpeedX = 0;
+    enableRotationX = false;
+    document.getElementById("rotationSpeedX").value = 0;
+});
+// Fetching rotation speed Y
+document.getElementById("rotationSpeedY").addEventListener("input", e => {
+    rotationSpeedY = e.target.value === "" ? 0 : parseFloat(e.target.value);
+});
+// Rotate along Y axis
+document.getElementById("rotateY").addEventListener("click", e => {
+    if (rotationSpeedY != 0) enableRotationY = !enableRotationY;
+});
+// Resetting rotation on Y
+document.getElementById("resetRotationY").addEventListener("click", e => {
+    model.rotation.y = 0;
+    rotationSpeedY = 0;
+    enableRotationY = false;
+    document.getElementById("rotationSpeedY").value = 0;
+});
+// Fetching rotation speed Z
+document.getElementById("rotationSpeedZ").addEventListener("input", e => {
+    rotationSpeedZ = e.target.value === "" ? 0 : parseFloat(e.target.value);
+});
+// Rotate along Z axis
+document.getElementById("rotateZ").addEventListener("click", e => {
+    if (rotationSpeedZ != 0) enableRotationZ = !enableRotationZ;
+});
+// Resetting rotation on Z
+document.getElementById("resetRotationZ").addEventListener("click", e => {
+    model.rotation.z = 0;
+    rotationSpeedZ = 0;
+    enableRotationZ = false;
+    document.getElementById("rotationSpeedZ").value = 0;
+});
+document.getElementById("toggleAxes").addEventListener("click", e => {
+    displayAxes = !displayAxes;
+    displayAxes ? scene.add(axes) : scene.remove(axes);
+});
+
+/*
+    Perspective controls
+*/
+// Isometric view
+document.getElementById("isometricView").addEventListener("click", e => {
+    camera.position.set(0.5, 0.5, 0.5);
+});
+// Front view
+document.getElementById("frontView").addEventListener("click", e => {
+    camera.position.set(0, 0.1, 0.5);
+});
+// Rear view
+document.getElementById("rearView").addEventListener("click", e => {
+    camera.position.set(0, 0.1, -0.75);
+});
+// Left view
+document.getElementById("leftView").addEventListener("click", e => {
+    camera.position.set(0.5, 0.1, 0);
+});
+// Right view
+document.getElementById("rightView").addEventListener("click", e => {
+    camera.position.set(-0.5, 0.1, 0);
+});
+// Top view
+document.getElementById("topView").addEventListener("click", e => {
+    camera.position.set(0, 1, 0);
+});
+// Bottom view
+document.getElementById("bottomView").addEventListener("click", e => {
+    camera.position.set(0, -1, 0);
+});
+
+/*
+    Camera controls
+*/
+document.getElementById("resetCamera").addEventListener("click", e => {
+    camera.position.set(0.5, 0.5, 0.5);
+})

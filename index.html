@@ -6,10 +6,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Model Viewer</title>
     <link rel="stylesheet" href="css/main.css">
-    <script src="js/require.js" defer></script>
-    <script src="js/scenery.js" defer></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./js/threejs/src/Three.js",
+                "OBJLoader": "./js/threejs/examples/jsm/loaders/OBJLoader.js",
+                "MTLLoader": "./js/threejs/examples/jsm/loaders/MTLLoader.js",
+                "FBXLoader": "./js/threejs/examples/jsm/loaders/FBXLoader.js",
+                "STLLoader": "./js/threejs/examples/jsm/loaders/STLLoader.js",
+                "OrbitControls": "./js/threejs/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+    <script type="module" src="js/scenery.js" defer></script>
 </head>
 <body>
-    
+    <div id="controls-wrapper">
+        <div class="section">
+            <div class="section-heading">
+                <h5>Axes</h5>
+            </div>
+            <div class="section-content">
+                <button id="rotateX" type="button">Rotate-X</button>
+                <button id="rotateY" type="button">Rotate-Y</button>
+                <button id="rotateZ" type="button">Rotate-Z</button>
+            </div>
+            <div class="section-content">
+                <input type="number" step="0.01" id="rotationSpeedX" placeholder="X speed..." value="0">
+                <input type="number" step="0.01" id="rotationSpeedY" placeholder="Y speed..." value="0">
+                <input type="number" step="0.01" id="rotationSpeedZ" placeholder="Z speed..." value="0">
+            </div>
+            <div class="section-content">
+                <button id="resetRotationX" type="button">Reset rotation X</button>
+                <button id="resetRotationY" type="button">Reset rotation Y</button>
+                <button id="resetRotationZ" type="button">Reset rotation Z</button>
+            </div>
+            <div class="section-content">
+                <button id="toggleAxes" type="button">Toggle axes</button>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-heading">
+                <h5>Perspective</h5>
+            </div>
+            <div class="section-content">
+                <button id="isometricView" type="button">Isometric View</button>
+            </div>
+            <div class="section-content">
+                <button id="frontView" type="button">Front View</button>
+                <button id="rearView" type="button">Rear View</button>
+            </div>
+            <div class="section-content">
+                <button id="leftView" type="button">Left View</button>
+                <button id="rightView" type="button">Right View</button>
+            </div>
+            <div class="section-content">
+                <button id="topView" type="button">Top View</button>
+                <button id="bottomView" type="button">Bottom View</button>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-heading">
+                <h5>Camera</h5>
+            </div>
+            <div class="section-content">
+                <button id="resetCamera" type="button">Reset Camera View</button>
+            </div>
+            <div class="section-content">
+                <input type="number" id="cameraPosX" disabled>
+                <input type="number" id="cameraPosY" disabled>
+                <input type="number" id="cameraPosZ" disabled>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-heading">
+                <h5>Model</h5>
+            </div>
+            <div class="section-content">
+                <button id="displayEdges" type="button">Display edges</button>
+                <button id="displayWireframe" type="button">Display wireframe</button>
+            </div>
+            <div class="section-content">
+                <input type="text" id="edgeColor" placeholder="Edge color value..." disabled>
+                <input type="text" id="wireframeColor" placeholder="Wireframe color value..." disabled>
+            </div>
+            <div class="section-content">
+                <button id="toggleAnimation" type="button">Toggle model animation</button>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-heading">
+                <h5>Parts</h5>
+            </div>
+            <div id="parts" class="section-content">
+            </div>
+        </div>
+    </div>
 </body>
 </html>

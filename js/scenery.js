@@ -76,9 +76,12 @@ objloader.load(
         // If so, append the parts to the control panel
         object.traverse(child => {
             if (child instanceof THREE.Mesh){
-                const elem = document.createElement('input');
-                elem.setAttribute("type", "checkbox");
-                document.getElementById("parts").appendChild(elem);
+                const checkbox = document.createElement('input');
+                const label = document.createElement('label');
+                checkbox.setAttribute("type", "checkbox");
+                label.innerText = `Mesh ID: ${child.id}`;
+                document.getElementById("parts").appendChild(checkbox);
+                document.getElementById("parts").appendChild(label);
             }
         });
     },
@@ -90,43 +93,6 @@ objloader.load(
     }
 );
 
-// /*
-//     Geometry edges
-// */
-// const edges = new THREE.EdgesGeometry(model);
-// const geometryEdges = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: geometryEdgesColor}));
-// if (showGeometryEdges){
-//     scene.add(geometryEdges);
-// }
-
-// /*
-//     Wireframe
-// */
-// const wireframe = new THREE.WireframeGeometry(model);
-// const wireframeLines = new THREE.LineSegments(wireframe);
-// wireframeLines.material.depthTest = false;
-// wireframeLines.material.opacity = wireframeOpacity;
-// wireframeLines.material.transparent = true;
-// if (showWireframe){
-//     scene.add(wireframeLines);
-// }
-
-// // Toggling model properties
-// window.addEventListener("keypress", e => {
-
-//     // Geometry edges
-//     if (e.key.toLowerCase() === "e"){
-//         showGeometryEdges = !showGeometryEdges;
-//         showGeometryEdges ? scene.add(geometryEdges) : scene.remove(geometryEdges);
-//     }
-
-//     // Wireframe
-//     if (e.key.toLowerCase() === "w"){
-//         showWireframe = !showWireframe;
-//         showWireframe ? scene.add(wireframeLines) : scene.remove(wireframeLines);
-//     }
-// });
-
 // Scene rendering
 const animate = () => {
     requestAnimationFrame(animate);
@@ -137,14 +103,8 @@ const animate = () => {
     if (enableRotationX) model.rotation.x += rotationSpeedX;
     if (enableRotationY) model.rotation.y += rotationSpeedY;
     if (enableRotationZ) model.rotation.z += rotationSpeedZ;
-
-    // Displaying camera positions
-    document.getElementById("cameraPosX").value = camera.position.x.toFixed(2);
-    document.getElementById("cameraPosY").value = camera.position.y.toFixed(2);
-    document.getElementById("cameraPosZ").value = camera.position.z.toFixed(2);
 }
 animate(); // Start rendering
-
 
 /*
     Axes controls
@@ -230,10 +190,3 @@ document.getElementById("topView").addEventListener("click", e => {
 document.getElementById("bottomView").addEventListener("click", e => {
     camera.position.set(0, -1, 0);
 });
-
-/*
-    Camera controls
-*/
-document.getElementById("resetCamera").addEventListener("click", e => {
-    camera.position.set(0.5, 0.5, 0.5);
-})

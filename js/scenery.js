@@ -39,6 +39,7 @@ controls.update()
 
 document.body.appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.domElement.id = "threejs-canvas";
 
 scene.add(ambientLight);
 scene.add(camera);
@@ -179,9 +180,22 @@ document.getElementById("bottomView").addEventListener("click", e => {
 });
 
 /*
+    Model controls
+*/
+// Updating model color
+const updateModelColor = (model, color) => {
+    model.traverse(child => {
+        if (child instanceof THREE.Mesh && child.material) child.material.color.setHex(color.replace("#", "0x"));
+    });
+}
+document.getElementById("model-color").addEventListener("input", e => {
+    e.target.value === "" ? updateModelColor(model, "#FFFFFF") : updateModelColor(model, e.target.value);
+});
+
+/*
     Enviroment controls
 */
-// Enviroment color
-document.getElementById("enviromentColor").addEventListener("input", e => {
-    scene.background = e.target.value === "" ? new THREE.Color("black") : new THREE.Color(e.target.value);
+// Updating enviroment background color
+document.getElementById("enviroment-color").addEventListener("input", e => {
+    scene.background = e.target.value === "" ? "#000000" : new THREE.Color(e.target.value);
 });

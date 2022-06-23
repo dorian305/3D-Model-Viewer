@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Model Viewer</title>
     <link rel="stylesheet" href="css/main.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script type="importmap">
         {
             "imports": {
@@ -19,6 +20,7 @@
         }
     </script>
     <script type="module" src="js/scenery.js" defer></script>
+    <script type="module" src="js/jscolor.js" defer></script>
 </head>
 <body>
     <div id="controls-wrapper">
@@ -77,6 +79,16 @@
                 <input type="text" id="edgeColor" placeholder="HEX, RGBA...">
                 <input type="text" id="wireframeColor" placeholder="HEX, RGBA...">
             </div>
+            <div class="section-content">
+                <div class="section-content-item">
+                    <label>Model: </label>
+                    <input type="text" id="model-color" value="#FFFFFF" data-jscolor="{
+                        position: 'right', width: 200, height: 100,
+                        padding: 10, sliderSize: 25,
+                        borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
+                    }">
+                </div>
+            </div>
         </div>
         <div class="section">
             <div class="section-heading">
@@ -84,8 +96,12 @@
             </div>
             <div class="section-content">
                 <div class="section-content-item">
-                    <label>Color: </label>
-                    <input type="text" id="enviromentColor" placeholder="HEX, RGBA...">
+                    <label>Background: </label>
+                    <input type="text" id="enviroment-color" value="#000000" data-jscolor="{
+                        position: 'right', width: 200, height: 100,
+                        padding: 10, sliderSize: 25,
+                        borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
+                    }">
                 </div>
             </div>
         </div>

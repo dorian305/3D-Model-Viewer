@@ -5,6 +5,13 @@ import { MTLLoader } from "MTLLoader";
 import { FBXLoader } from "FBXLoader";
 import { STLLoader } from "STLLoader";
 
+const centerObject = object => {
+    const box = new THREE.Box3().setFromObject(object);
+    const center = new THREE.Vector3();
+    box.getCenter(new THREE.Vector3());
+    object.position.sub(center);
+}
+
 // System variables
 let model = null;
 let enableRotationX = false;
@@ -27,7 +34,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 const axes = new THREE.AxesHelper();
 
 camera.add(pointLight);
-camera.position.set(0.5, 0.5, 0.5);
+camera.position.set(1, 1, 1);
 controls.update()
 
 document.body.appendChild(renderer.domElement);
@@ -40,40 +47,15 @@ if (displayAxes) scene.add(axes);
 /*
     Model loading
 */
-// const fbxloader = new FBXLoader();
-// fbxloader.load(
-//     '../models/mercedes.fbx',
-//     object => {
-//         scene.add(object);
-//         model = object;
-
-//         // Reading whether model contains child meshes
-//         // If so, append the parts to the control panel
-//         object.traverse(child => {
-//             if (child instanceof THREE.Mesh){
-//                 const elem = document.createElement('input');
-//                 elem.setAttribute("type", "checkbox");
-//                 document.getElementById("parts").appendChild(elem);
-//             }
-//         });
-//     },
-//     xhr => {
-//         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-//     },
-//     error => {
-//         console.log(`Error occured: ${error}`);
-//     }
-// );
-
-const objloader = new OBJLoader();
-objloader.load(
+const loader = new OBJLoader();
+loader.load(
     '../models/camion.obj',
     object => {
-        scene.add(object);
-        model = object;
+        // Centering the model to the scene origin
+        centerObject(object);
 
         // Reading whether model contains child meshes
-        // If so, append the parts to the control panel
+        // If so, append the parts to the panel
         object.traverse(child => {
             if (child instanceof THREE.Mesh){
                 const checkbox = document.createElement('input');
@@ -84,6 +66,10 @@ objloader.load(
                 document.getElementById("parts").appendChild(label);
             }
         });
+
+        // Adding object to the scene
+        scene.add(object);
+        model = object;
     },
     xhr => {
         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
@@ -93,7 +79,7 @@ objloader.load(
     }
 );
 
-// Scene rendering
+// Rendering
 const animate = () => {
     requestAnimationFrame(animate);
     controls.update();
@@ -154,6 +140,7 @@ document.getElementById("resetRotationZ").addEventListener("click", e => {
     enableRotationZ = false;
     document.getElementById("rotationSpeedZ").value = 0;
 });
+// Toggling axes
 document.getElementById("toggleAxes").addEventListener("click", e => {
     displayAxes = !displayAxes;
     displayAxes ? scene.add(axes) : scene.remove(axes);
@@ -189,4 +176,12 @@ document.getElementById("topView").addEventListener("click", e => {
 // Bottom view
 document.getElementById("bottomView").addEventListener("click", e => {
     camera.position.set(0, -1, 0);
+});
+
+/*
+    Enviroment controls
+*/
+// Enviroment color
+document.getElementById("enviromentColor").addEventListener("input", e => {
+    scene.background = e.target.value === "" ? new THREE.Color("black") : new THREE.Color(e.target.value);
 });

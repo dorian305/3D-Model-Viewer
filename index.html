@@ -27,9 +27,9 @@
                 <h5>Axes</h5>
             </div>
             <div class="section-content">
-                <button id="rotateX" type="button">Rotate-X</button>
-                <button id="rotateY" type="button">Rotate-Y</button>
-                <button id="rotateZ" type="button">Rotate-Z</button>
+                <button id="rotateX" type="button">Rotate X</button>
+                <button id="rotateY" type="button">Rotate Y</button>
+                <button id="rotateZ" type="button">Rotate Z</button>
             </div>
             <div class="section-content">
                 <input type="number" step="0.01" id="rotationSpeedX" placeholder="X speed..." value="0">
@@ -37,9 +37,9 @@
                 <input type="number" step="0.01" id="rotationSpeedZ" placeholder="Z speed..." value="0">
             </div>
             <div class="section-content">
-                <button id="resetRotationX" type="button">Reset rotation X</button>
-                <button id="resetRotationY" type="button">Reset rotation Y</button>
-                <button id="resetRotationZ" type="button">Reset rotation Z</button>
+                <button id="resetRotationX" type="button">Reset X</button>
+                <button id="resetRotationY" type="button">Reset Y</button>
+                <button id="resetRotationZ" type="button">Reset Z</button>
             </div>
             <div class="section-content">
                 <button id="toggleAxes" type="button">Toggle axes</button>
@@ -74,8 +74,19 @@
                 <button id="displayWireframe" type="button">Display wireframe</button>
             </div>
             <div class="section-content">
-                <input type="text" id="edgeColor" placeholder="Edge color value...">
-                <input type="text" id="wireframeColor" placeholder="Wireframe color value...">
+                <input type="text" id="edgeColor" placeholder="HEX, RGBA...">
+                <input type="text" id="wireframeColor" placeholder="HEX, RGBA...">
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-heading">
+                <h5>Enviroment</h5>
+            </div>
+            <div class="section-content">
+                <div class="section-content-item">
+                    <label>Color: </label>
+                    <input type="text" id="enviromentColor" placeholder="HEX, RGBA...">
+                </div>
             </div>
         </div>
         <div class="section">

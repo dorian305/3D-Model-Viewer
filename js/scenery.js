@@ -54,16 +54,22 @@ loader.load(
             z: camera.position.z
         };
 
-        // Reading whether model contains child meshes
-        // If so, append the parts to the panel
+        // Traversing object meshes
         object.traverse(child => {
             if (child instanceof THREE.Mesh){
-                const checkbox = document.createElement('input');
-                const label = document.createElement('label');
-                checkbox.setAttribute("type", "checkbox");
-                label.innerText = `Mesh ID: ${child.id}`;
-                document.getElementById("parts").appendChild(checkbox);
-                document.getElementById("parts").appendChild(label);
+                // Adding mesh checkboxes for toggling
+                let elem1 = document.createElement("div");
+                elem1.classList.add("section-content-item");
+                let elem2 = document.createElement("label");
+                elem2.innerText = `Mesh ID: ${child.id}`;
+                let elem3 = document.createElement("input");
+                elem3.setAttribute("type", "checkbox");
+                elem3.setAttribute("checked", "checked");
+                elem3.addEventListener("change", toggleMesh);
+                elem3.id = child.id;
+                elem1.appendChild(elem2);
+                elem1.appendChild(elem3);
+                document.querySelector("#parts").appendChild(elem1);
             }
         });
 
@@ -78,37 +84,6 @@ loader.load(
         console.log(`Error occured: ${error}`);
     }
 );
-
-// const loader = new FBXLoader();
-// loader.load(
-//     '../models/dragon.fbx',
-//     object => {
-//         fitCameraToObject(camera, object, controls);
-
-//         // Reading whether model contains child meshes
-//         // If so, append the parts to the panel
-//         object.traverse(child => {
-//             if (child instanceof THREE.Mesh){
-//                 const checkbox = document.createElement('input');
-//                 const label = document.createElement('label');
-//                 checkbox.setAttribute("type", "checkbox");
-//                 label.innerText = `Mesh ID: ${child.id}`;
-//                 document.getElementById("parts").appendChild(checkbox);
-//                 document.getElementById("parts").appendChild(label);
-//             }
-//         });
-
-//         // Adding object to the scene
-//         scene.add(object);
-//         model = object;
-//     },
-//     xhr => {
-//         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-//     },
-//     error => {
-//         console.log(`Error occured: ${error}`);
-//     }
-// );
 
 // Rendering
 const animate = () => {
@@ -198,6 +173,15 @@ const updateModelColor = (model, color) => {
     });
 }
 document.getElementById("model-color").addEventListener("input", e => e.target.value === "" ? updateModelColor(model, "#FFFFFF") : updateModelColor(model, e.target.value));
+// Toggle meshes
+const toggleMesh = e => {
+    const meshID = e.target.id;
+    model.traverse(child => {
+        if (child instanceof THREE.Mesh && child.id == meshID){
+            child.visible = e.target.checked;
+        }
+    });
+}
 
 /*
     Enviroment controls

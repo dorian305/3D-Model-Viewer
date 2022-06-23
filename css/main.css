@@ -51,6 +51,10 @@ div.section-content {
     background-color: #242424;
 }
 
+div#parts {
+    flex-flow: column;
+}
+
 div.section-content-item {
     display: flex;
     align-items: center;
@@ -84,11 +88,6 @@ input[type="number"], input[type="text"] {
     outline: none;
     color: white;
     background-color: #363636;
-}
-
-input[type="checkbox"] {
-    width: 100%;
-    display: block;
 }
 
 button:hover {

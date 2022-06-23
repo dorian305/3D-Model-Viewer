@@ -1,16 +1,10 @@
 import * as THREE from "three";
+import { fitCameraToObject } from "./functions.js";
 import { OrbitControls } from "OrbitControls";
 import { OBJLoader } from "OBJLoader";
 import { MTLLoader } from "MTLLoader";
 import { FBXLoader } from "FBXLoader";
 import { STLLoader } from "STLLoader";
-
-const centerObject = object => {
-    const box = new THREE.Box3().setFromObject(object);
-    const center = new THREE.Vector3();
-    box.getCenter(new THREE.Vector3());
-    object.position.sub(center);
-}
 
 // System variables
 let model = null;
@@ -21,6 +15,7 @@ let rotationSpeedX = 0;
 let rotationSpeedY = 0;
 let rotationSpeedZ = 0;
 let displayAxes = true;
+let cameraOffset;
 
 /*
     Setting up the scenery
@@ -31,10 +26,9 @@ const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
 const pointLight = new THREE.PointLight(0xffffff, 0.8);
 const renderer = new THREE.WebGLRenderer();
 const controls = new OrbitControls(camera, renderer.domElement);
-const axes = new THREE.AxesHelper();
+const axes = new THREE.AxesHelper(1000000000);
 
 camera.add(pointLight);
-camera.position.set(1, 1, 1);
 controls.update()
 
 document.body.appendChild(renderer.domElement);
@@ -50,10 +44,15 @@ if (displayAxes) scene.add(axes);
 */
 const loader = new OBJLoader();
 loader.load(
-    '../models/camion.obj',
+    '../models/gun.obj',
     object => {
-        // Centering the model to the scene origin
-        centerObject(object);
+        // Fitting camera to the object and saving camera offsets
+        fitCameraToObject(camera, object, controls);
+        cameraOffset = {
+            x: camera.position.x,
+            y: camera.position.y,
+            z: camera.position.z
+        };
 
         // Reading whether model contains child meshes
         // If so, append the parts to the panel
@@ -73,12 +72,43 @@ loader.load(
         model = object;
     },
     xhr => {
-        console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+        console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
     },
     error => {
         console.log(`Error occured: ${error}`);
     }
 );
+
+// const loader = new FBXLoader();
+// loader.load(
+//     '../models/dragon.fbx',
+//     object => {
+//         fitCameraToObject(camera, object, controls);
+
+//         // Reading whether model contains child meshes
+//         // If so, append the parts to the panel
+//         object.traverse(child => {
+//             if (child instanceof THREE.Mesh){
+//                 const checkbox = document.createElement('input');
+//                 const label = document.createElement('label');
+//                 checkbox.setAttribute("type", "checkbox");
+//                 label.innerText = `Mesh ID: ${child.id}`;
+//                 document.getElementById("parts").appendChild(checkbox);
+//                 document.getElementById("parts").appendChild(label);
+//             }
+//         });
+
+//         // Adding object to the scene
+//         scene.add(object);
+//         model = object;
+//     },
+//     xhr => {
+//         console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+//     },
+//     error => {
+//         console.log(`Error occured: ${error}`);
+//     }
+// );
 
 // Rendering
 const animate = () => {
@@ -150,34 +180,13 @@ document.getElementById("toggleAxes").addEventListener("click", e => {
 /*
     Perspective controls
 */
-// Isometric view
-document.getElementById("isometricView").addEventListener("click", e => {
-    camera.position.set(0.5, 0.5, 0.5);
-});
-// Front view
-document.getElementById("frontView").addEventListener("click", e => {
-    camera.position.set(0, 0.1, 0.5);
-});
-// Rear view
-document.getElementById("rearView").addEventListener("click", e => {
-    camera.position.set(0, 0.1, -0.75);
-});
-// Left view
-document.getElementById("leftView").addEventListener("click", e => {
-    camera.position.set(0.5, 0.1, 0);
-});
-// Right view
-document.getElementById("rightView").addEventListener("click", e => {
-    camera.position.set(-0.5, 0.1, 0);
-});
-// Top view
-document.getElementById("topView").addEventListener("click", e => {
-    camera.position.set(0, 1, 0);
-});
-// Bottom view
-document.getElementById("bottomView").addEventListener("click", e => {
-    camera.position.set(0, -1, 0);
-});
+document.getElementById("isometricView").addEventListener("click", e => camera.position.set(cameraOffset.x, cameraOffset.y, cameraOffset.z));
+document.getElementById("frontView").addEventListener("click", e => camera.position.set(0, 0, cameraOffset.z));
+document.getElementById("rearView").addEventListener("click", e => camera.position.set(0, 0, -cameraOffset.z));
+document.getElementById("leftView").addEventListener("click", e => camera.position.set(-cameraOffset.x, 0, 0));
+document.getElementById("rightView").addEventListener("click", e => camera.position.set(cameraOffset.x, 0, 0));
+document.getElementById("topView").addEventListener("click", e => camera.position.set(0, cameraOffset.y, 0));
+document.getElementById("bottomView").addEventListener("click", e => camera.position.set(0, -cameraOffset.y, 0));
 
 /*
     Model controls
@@ -188,14 +197,9 @@ const updateModelColor = (model, color) => {
         if (child instanceof THREE.Mesh && child.material) child.material.color.setHex(color.replace("#", "0x"));
     });
 }
-document.getElementById("model-color").addEventListener("input", e => {
-    e.target.value === "" ? updateModelColor(model, "#FFFFFF") : updateModelColor(model, e.target.value);
-});
+document.getElementById("model-color").addEventListener("input", e => e.target.value === "" ? updateModelColor(model, "#FFFFFF") : updateModelColor(model, e.target.value));
 
 /*
     Enviroment controls
 */
-// Updating enviroment background color
-document.getElementById("enviroment-color").addEventListener("input", e => {
-    scene.background = e.target.value === "" ? "#000000" : new THREE.Color(e.target.value);
-});
+document.getElementById("enviroment-color").addEventListener("input", e => scene.background = e.target.value === "" ? "#000000" : new THREE.Color(e.target.value));

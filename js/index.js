@@ -7,7 +7,7 @@ import { FBXLoader } from "FBXLoader";
 import { STLLoader } from "STLLoader";
 
 // System variables
-let model = null;
+let model = [];
 let enableRotationX = false;
 let enableRotationY = false;
 let enableRotationZ = false;

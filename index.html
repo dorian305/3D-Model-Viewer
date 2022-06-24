@@ -19,8 +19,8 @@
             }
         }
     </script>
-    <script type="module" src="js/scenery.js" defer></script>
     <script type="module" src="js/jscolor.js" defer></script>
+    <script type="module" src="js/scenery.js" defer></script>
 </head>
 <body>
     <div id="controls-wrapper">
@@ -72,27 +72,8 @@
                 <h5>Model</h5>
             </div>
             <div class="section-content">
-                <button id="displayEdges" type="button">Display edges</button>
-                <button id="displayWireframe" type="button">Display wireframe</button>
-            </div>
-            <div class="section-content">
-                <input type="text" id="edgeColor" placeholder="HEX, RGBA...">
-                <input type="text" id="wireframeColor" placeholder="HEX, RGBA...">
-            </div>
-            <div class="section-content">
-                <div class="section-content-item">
-                    <label>Model: </label>
-                    <input type="text" id="model-color" value="#FFFFFF" data-jscolor="{
-                        position: 'right', width: 200, height: 100,
-                        padding: 10, sliderSize: 25,
-                        borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
-                    }">
-                </div>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-heading">
-                <h5>Parts</h5>
+                <button id="display-edges" type="button" data-display="false">Display edges</button>
+                <button id="display-wireframe" type="button" data-display="false">Display wireframe</button>
             </div>
             <div id="parts" class="section-content">
             </div>

@@ -27,7 +27,7 @@ const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
 const pointLight = new THREE.PointLight(0xffffff, 0.8);
 const renderer = new THREE.WebGLRenderer();
 const controls = new OrbitControls(camera, renderer.domElement);
-const axes = new THREE.AxesHelper(1000000000);
+const axes = new THREE.AxesHelper(500);
 
 camera.add(pointLight);
 controls.update()
@@ -45,7 +45,7 @@ if (displayAxes) scene.add(axes);
 */
 const loader = new OBJLoader();
 loader.load(
-    '../models/gun.obj',
+    '../models/camion.obj',
     object => {
         // Fitting camera to the object and saving camera offsets
         fitCameraToObject(camera, object, controls);
@@ -258,7 +258,7 @@ document.getElementById("display-edges").addEventListener("click", e => {
                 const EdgeGeometry = new THREE.EdgesGeometry(child.geometry);
                 const EdgesMaterial = new THREE.LineBasicMaterial({
                     color: parseInt(EdgesColor),
-                    linewidth: 10
+                    linewidth: 1
                 });
                 const edge = new THREE.LineSegments(EdgeGeometry, EdgesMaterial);
                 

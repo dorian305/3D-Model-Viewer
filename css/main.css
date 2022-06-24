@@ -53,6 +53,8 @@ div.section-content {
 
 div#parts {
     flex-flow: column;
+    overflow-y: auto;
+    min-height: 250px;
 }
 
 div.section-content-item {
@@ -107,5 +109,5 @@ input[type="number"], input[type="text"] {
 }
 
 input.mesh-color-picker {
-    
+
 }

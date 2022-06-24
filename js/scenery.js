@@ -45,7 +45,7 @@ if (displayAxes) scene.add(axes);
 */
 const loader = new OBJLoader();
 loader.load(
-    '../models/camion.obj',
+    '../models/gun.obj',
     object => {
         // Fitting camera to the object and saving camera offsets
         fitCameraToObject(camera, object, controls);
@@ -182,7 +182,7 @@ document.getElementById("bottomView").addEventListener("click", e => camera.posi
 /*
     Model controls
 */
-// Toggling wireframe
+// Toggle wireframe
 document.getElementById("display-wireframe").addEventListener("click", e => {
     const btn = e.target;
     let display = btn.getAttribute("data-display") === "true"; // Convert string representation to a boolean
@@ -206,7 +206,7 @@ document.getElementById("display-wireframe").addEventListener("click", e => {
     // Hide wireframe
     else {
         display = false;
-        btn.innerText = "Display wireframe";
+        btn.innerText = "Show wireframe";
 
         if (model instanceof THREE.Mesh){
             model.material.wireframe = false;
@@ -219,7 +219,7 @@ document.getElementById("display-wireframe").addEventListener("click", e => {
             });
         }
     }
-    e.target.setAttribute("data-display", display);
+    btn.setAttribute("data-display", display);
 });
 // Updating meshes color
 const updateMeshColor = e => {
@@ -242,35 +242,41 @@ const toggleMesh = e => {
         }
     });
 }
-// // Toggle Edges
-// const toggleEdges = e => {
+// Toggle Edges
+document.getElementById("display-edges").addEventListener("click", e => {
+    const btn = e.target
+    let display = btn.getAttribute("data-display") === "true"; // Convert string representation to a boolean
 
-//     // Display edges
-//     if (e.target.checked){
-//         const EdgesColor = "0x09FF22";
-//         model.traverse(child => {
-//             if (child instanceof THREE.Mesh){
-//                 console.log(model);
-//                 const EdgeGeometry = new THREE.EdgesGeometry(model.geometry);
-//                 const EdgesMaterial = new THREE.LineBasicMaterial({
-//                     color: parseInt(EdgesColor),
-//                     linewidth: 4
-//                 });
-//                 const edge = new THREE.LineSegments(EdgeGeometry, EdgesMaterial);
+    // Display edges
+    if (!display){
+        display = true;
+        btn.innerText = "Hide edges"
+
+        const EdgesColor = "0x00FFF6";
+        model.traverse(child => {
+            if (child instanceof THREE.Mesh){
+                const EdgeGeometry = new THREE.EdgesGeometry(child.geometry);
+                const EdgesMaterial = new THREE.LineBasicMaterial({
+                    color: parseInt(EdgesColor),
+                    linewidth: 10
+                });
+                const edge = new THREE.LineSegments(EdgeGeometry, EdgesMaterial);
                 
-//                 model.add(edge);
-//                 edges.push(new THREE.LineSegments(EdgeGeometry, EdgesMaterial));
-//             }
-//         });
-//     }
+                edges.push(edge);
+                model.add(edge);
+            }
+        });
+    }
+    // Hide edges
+    else {
+        display = false;
+        btn.innerText = "Show edges"
 
-//     // Remove edges
-//     else {
-//         edges.forEach(edge => model.remove(edge));
-//         edges = [];
-//     }
-// }
-// document.getElementById("displayEdges").addEventListener("change", toggleEdges);
+        edges.forEach(edge => model.remove(edge));
+        edges = [];
+    }
+    btn.setAttribute("data-display", display);
+});
 
 /*
     Enviroment controls

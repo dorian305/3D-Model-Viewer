@@ -19,79 +19,96 @@
             }
         }
     </script>
-    <script type="module" src="js/jscolor.js" defer></script>
+    <script src="js/jscolor.js" defer></script>
     <script type="module" src="js/index.js" defer></script>
 </head>
 <body>
-    <div id="controls-wrapper">
-        <div class="section">
-            <div class="section-heading">
-                <h5>Axes</h5>
+    <div id="model-viewer-container">
+        <div id="configuration-panel-container">
+            <div id="configuration-panel-header">
+                <h2 id="configuration-panel-heading">Configuration Panel</h2>
+                <div id="toggle-configuration-panel-btn"><<</div>
             </div>
-            <div class="section-content">
-                <button id="rotateX" type="button">Rotate X</button>
-                <button id="rotateY" type="button">Rotate Y</button>
-                <button id="rotateZ" type="button">Rotate Z</button>
-            </div>
-            <div class="section-content">
-                <input type="number" step="0.01" id="rotationSpeedX" placeholder="X speed..." value="0">
-                <input type="number" step="0.01" id="rotationSpeedY" placeholder="Y speed..." value="0">
-                <input type="number" step="0.01" id="rotationSpeedZ" placeholder="Z speed..." value="0">
-            </div>
-            <div class="section-content">
-                <button id="resetRotationX" type="button">Reset X</button>
-                <button id="resetRotationY" type="button">Reset Y</button>
-                <button id="resetRotationZ" type="button">Reset Z</button>
-            </div>
-            <div class="section-content">
-                <button id="toggleAxes" type="button">Toggle axes</button>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-heading">
-                <h5>Perspective</h5>
-            </div>
-            <div class="section-content">
-                <button id="isometricView" type="button">Isometric View</button>
-            </div>
-            <div class="section-content">
-                <button id="frontView" type="button">Front View</button>
-                <button id="rearView" type="button">Rear View</button>
-            </div>
-            <div class="section-content">
-                <button id="leftView" type="button">Left View</button>
-                <button id="rightView" type="button">Right View</button>
-            </div>
-            <div class="section-content">
-                <button id="topView" type="button">Top View</button>
-                <button id="bottomView" type="button">Bottom View</button>
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-heading">
-                <h5>Model</h5>
-            </div>
-            <div class="section-content">
-                <button id="display-edges" type="button" data-display="false">Show edges</button>
-                <button id="display-wireframe" type="button" data-display="false">Show wireframe</button>
-            </div>
-            <div id="parts" class="section-content">
-            </div>
-        </div>
-        <div class="section">
-            <div class="section-heading">
-                <h5>Enviroment</h5>
-            </div>
-            <div class="section-content">
-                <div class="section-content-item">
-                    <label>Background: </label>
-                    <input type="text" id="enviroment-color" value="#000000" data-jscolor="{
-                        position: 'right', width: 200, height: 100,
-                        padding: 10, sliderSize: 25,
-                        borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
-                    }">
+            <div id="configuration-panel-body">
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Axes</h5>
+                    </div>
+                    <div class="section-content">
+                        <button id="rotateX" type="button">Rotate X</button>
+                        <button id="rotateY" type="button">Rotate Y</button>
+                        <button id="rotateZ" type="button">Rotate Z</button>
+                    </div>
+                    <div class="section-content">
+                        <input type="number" step="0.01" id="rotationSpeedX" placeholder="X speed..." value="0.01">
+                        <input type="number" step="0.01" id="rotationSpeedY" placeholder="Y speed..." value="0.01">
+                        <input type="number" step="0.01" id="rotationSpeedZ" placeholder="Z speed..." value="0.01">
+                    </div>
+                    <div class="section-content">
+                        <button id="resetRotationX" type="button">Reset X</button>
+                        <button id="resetRotationY" type="button">Reset Y</button>
+                        <button id="resetRotationZ" type="button">Reset Z</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="toggleAxes" type="button">Toggle axes</button>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Perspective</h5>
+                    </div>
+                    <div class="section-content">
+                        <button id="isometricView" type="button">Isometric View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="frontView" type="button">Front View</button>
+                        <button id="rearView" type="button">Rear View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="leftView" type="button">Left View</button>
+                        <button id="rightView" type="button">Right View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="topView" type="button">Top View</button>
+                        <button id="bottomView" type="button">Bottom View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="resetCamera" type="button">Reset camera</button>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Model</h5>
+                    </div>
+                    <div class="section-content">
+                        <button id="display-edges" type="button" data-display="false">Show edges</button>
+                        <button id="display-wireframe" type="button" data-display="false">Show wireframe</button>
+                    </div>
+                    <div id="loading-meshes">
+                        <div class="lds-ripple"><div></div><div></div></div>
+                        <p>Loading meshes...</p>
+                    </div>
+                    <div id="meshes">
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Enviroment</h5>
+                    </div>
+                    <div class="section-content">
+                        <label>Background: </label>
+                        <input type="text" class="mesh-color-picker" id="enviroment-color" value="#000000" data-jscolor="{
+                            position: 'right', width: 200, height: 100,
+                            padding: 10, sliderSize: 25,
+                            borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
+                            }">
+                    </div>
                 </div>
             </div>
+        </div>
+        <div id="loading-model">
+            <div class="lds-ripple"><div></div><div></div></div>
+            <p id="model-loaded-percentage"></p>
         </div>
     </div>
 </body>

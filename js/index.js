@@ -1,21 +1,125 @@
 import * as THREE from "three";
-import { fitCameraToObject } from "./functions.js";
 import { OrbitControls } from "OrbitControls";
+// Importing loaders
 import { OBJLoader } from "OBJLoader";
 import { MTLLoader } from "MTLLoader";
 import { FBXLoader } from "FBXLoader";
 import { STLLoader } from "STLLoader";
 
+/*
+    Fitting camera to object
+*/
+export const fitCameraToObject = (camera, object, orbitControls, offset) => {
+    const boundingBox = new THREE.Box3();
+    boundingBox.setFromObject( object );
+
+    const size = new THREE.Vector3();
+    boundingBox.getSize(size);
+
+    const fov = camera.fov * (Math.PI / 180);
+    const fovh = 2 * Math.atan(Math.tan(fov / 2) * camera.aspect);
+    const dx = size.z / 2 + Math.abs(size.x / 2 / Math.tan(fovh / 2));
+    const dy = size.z / 2 + Math.abs(size.y / 2 / Math.tan(fov / 2));
+    const cameraX = Math.max(dx, dy);
+    const cameraY = Math.max(dx, dy);
+    const cameraZ = Math.max(dx, dy);
+
+    // Offset the camera, if desired (to avoid filling the whole canvas)
+    if (offset !== undefined && offset !== 0){
+        cameraZ *= offset;
+    }
+
+    camera.position.set(cameraX, cameraY, cameraZ);
+
+    // Set the far plane of the camera so that it easily encompasses the whole object
+    const minZ = boundingBox.min.z;
+    const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ - minZ;
+
+    camera.far = cameraToFarEdge * 3;
+    camera.updateProjectionMatrix();
+
+    if (orbitControls !== undefined){
+        // Set camera to rotate around the center
+        orbitControls.target = new THREE.Vector3(0, 0, 0);
+
+        // Prevent camera from zooming out far enough to create far plane cutoff
+        orbitControls.maxDistance = cameraToFarEdge * 2;
+    }
+
+    return {
+        x: camera.position.x,
+        y: camera.position.y,
+        z: camera.position.z
+    };
+};
+
+/*
+    Loading model
+*/
+const loadModel = () => {
+    const loader = new OBJLoader();
+    loader.load(
+        '../models/gun.obj',
+        object => {
+            // Saving loaded model into variable
+            model = object;
+
+            // Appending checkbox for each mesh under "Model" section
+            model.traverse(child => {
+                if (child instanceof THREE.Mesh){
+                    document.querySelector("#meshes").insertAdjacentHTML("beforeend", `
+                    <div class="section-content" style="width: 95%;">
+                        <div>
+                            <label class="mesh-name">${child.name}</label>
+                            <input type="checkbox" id="${child.id}" class="meshes-checkbox" checked="checked">
+                        </div>
+                        <input type="text" class="mesh-color-picker" data-id="${child.id}" value="#FFFFFF" data-jscolor="{
+                            position: 'right', width: 200, height: 100,
+                            padding: 10, sliderSize: 25,
+                            borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
+                        }">
+                    </div>
+                    `);
+                }
+            });
+
+            // Fitting camera to the object
+            cameraOffset = fitCameraToObject(camera, model, controls);
+    
+            // Removing loading elements
+            document.getElementById("loading-model").remove();
+            document.getElementById("loading-meshes").remove();
+    
+            // Initializing meshes checkboxes and color pickers
+            initMeshesCheckbox();
+            initMeshesColorPicker();
+    
+            // Installing JSColor picker after the new pickers have been created dinamically
+            jscolor.install();
+    
+            // Adding object to the scene
+            scene.add(model);
+        },
+        xhr => {
+            document.getElementById("model-loaded-percentage").innerText = `${(xhr.loaded / xhr.total) * 100}% loaded...`
+        },
+        error => {
+            document.querySelectorAll(".loading").forEach(elem => elem.remove());
+            console.log(`Error occured: ${error}`);
+        }
+    );
+}
+
 // System variables
-let model = [];
+let model = null;
 let enableRotationX = false;
 let enableRotationY = false;
 let enableRotationZ = false;
-let rotationSpeedX = 0;
-let rotationSpeedY = 0;
-let rotationSpeedZ = 0;
-let displayAxes = true;
-let cameraOffset;
+let rotationSpeedX = parseFloat(document.getElementById("rotationSpeedX").value);
+let rotationSpeedY = parseFloat(document.getElementById("rotationSpeedX").value);
+let rotationSpeedZ = parseFloat(document.getElementById("rotationSpeedX").value);
+let displayAxes = false;
+let cameraOffset = {};
 let edges = [];
 
 /*
@@ -28,78 +132,18 @@ const pointLight = new THREE.PointLight(0xffffff, 0.8);
 const renderer = new THREE.WebGLRenderer();
 const controls = new OrbitControls(camera, renderer.domElement);
 const axes = new THREE.AxesHelper(500);
-
 camera.add(pointLight);
 controls.update()
-
-document.body.appendChild(renderer.domElement);
+document.getElementById("model-viewer-container").appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.domElement.id = "threejs-canvas";
-
 scene.add(ambientLight);
 scene.add(camera);
-if (displayAxes) scene.add(axes);
 
 /*
     Model loading
 */
-const loader = new OBJLoader();
-loader.load(
-    '../models/camion.obj',
-    object => {
-        // Fitting camera to the object and saving camera offsets
-        fitCameraToObject(camera, object, controls);
-        cameraOffset = {
-            x: camera.position.x,
-            y: camera.position.y,
-            z: camera.position.z
-        };
-
-        // Traversing object meshes
-        object.traverse(child => {
-            if (child instanceof THREE.Mesh){
-                // Adding mesh checkboxes for toggling
-                let elem1 = document.createElement("div");
-                elem1.classList.add("section-content-item");
-                let elem2 = document.createElement("label");
-                elem2.innerText = `Mesh ID: ${child.id}`;
-                let elem3 = document.createElement("input");
-                elem3.setAttribute("type", "checkbox");
-                elem3.setAttribute("checked", "checked");
-                elem3.addEventListener("change", toggleMesh);
-                elem3.id = child.id;
-                let elem4 = document.createElement("input");
-                elem4.setAttribute("type", "text");
-                elem4.setAttribute("data-id", child.id);
-                elem4.classList.add("mesh-color-picker");
-                elem4.setAttribute("value", "#FFFFFF");
-                elem4.setAttribute("data-jscolor", `{
-                    position: 'right', width: 200, height: 100,
-                    padding: 10, sliderSize: 25,
-                    borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
-                }`);
-                elem4.addEventListener("input", updateMeshColor);
-                elem1.appendChild(elem2);
-                elem1.appendChild(elem3);
-                elem1.appendChild(elem4);
-                document.querySelector("#parts").appendChild(elem1);
-            }
-        });
-
-        // Installing JSColor picker after the new pickers have been created dinamically
-        jscolor.install();
-
-        // Adding object to the scene
-        scene.add(object);
-        model = object;
-    },
-    xhr => {
-        console.log((xhr.loaded / xhr.total) * 100 + '% loaded');
-    },
-    error => {
-        console.log(`Error occured: ${error}`);
-    }
-);
+loadModel();
 
 // Rendering
 const animate = () => {
@@ -178,10 +222,31 @@ document.getElementById("leftView").addEventListener("click", e => camera.positi
 document.getElementById("rightView").addEventListener("click", e => camera.position.set(cameraOffset.x, 0, 0));
 document.getElementById("topView").addEventListener("click", e => camera.position.set(0, cameraOffset.y, 0));
 document.getElementById("bottomView").addEventListener("click", e => camera.position.set(0, -cameraOffset.y, 0));
+document.getElementById("resetCamera").addEventListener("click", e => cameraOffset = fitCameraToObject(camera, model, controls));
 
 /*
-    Model controls
+    Configuration panel
 */
+// Toggle CP visibility
+const cp = document.getElementById("configuration-panel-container");
+document.getElementById("toggle-configuration-panel-btn").addEventListener("click", e => {
+    const btn = e.target;
+
+    // Hide panel
+    if (parseInt(window.getComputedStyle(cp).getPropertyValue("left")) === 0){
+        cp.style.left = `${-cp.clientWidth}px`;
+        btn.innerText = ">>";
+        btn.style.right = `${-btn.clientWidth}px`;
+    }
+    
+    // Show panel
+    else {
+        cp.style.left = `0px`;
+        btn.innerText = "<<";
+        btn.style.right = `0px`;
+    }
+});
+
 // Toggle wireframe
 document.getElementById("display-wireframe").addEventListener("click", e => {
     const btn = e.target;
@@ -222,24 +287,32 @@ document.getElementById("display-wireframe").addEventListener("click", e => {
     btn.setAttribute("data-display", display);
 });
 // Updating meshes color
-const updateMeshColor = e => {
-    const meshID = e.target.getAttribute("data-id");
-    const color = e.target.value;
-    
-    model.traverse(child => {
-        if (child instanceof THREE.Mesh && child.material && child.id == meshID){
-            child.material.color.setHex(color.replace("#", "0x"));
-        }
+const initMeshesColorPicker = () => {
+    document.querySelectorAll(".mesh-color-picker").forEach(elem => {
+        elem.addEventListener("input", e => {
+            const meshID = e.target.getAttribute("data-id");
+            const color = e.target.value;
+            
+            model.traverse(child => {
+                if (child instanceof THREE.Mesh && child.material && child.id == meshID){
+                    child.material.color.setHex(color.replace("#", "0x"));
+                }
+            });
+        });
     });
 }
 // Toggle meshes
-const toggleMesh = e => {
-    const meshID = e.target.id;
-
-    model.traverse(child => {
-        if (child instanceof THREE.Mesh && child.id == meshID){
-            child.visible = e.target.checked;
-        }
+const initMeshesCheckbox = () => {
+    document.querySelectorAll(".meshes-checkbox").forEach(elem => {
+        elem.addEventListener("change", e => {
+            const meshID = e.target.id;
+    
+            model.traverse(child => {
+                if (child instanceof THREE.Mesh && child.id == meshID){
+                    child.visible = e.target.checked;
+                }
+            });
+        });
     });
 }
 // Toggle Edges
@@ -281,4 +354,4 @@ document.getElementById("display-edges").addEventListener("click", e => {
 /*
     Enviroment controls
 */
-document.getElementById("enviroment-color").addEventListener("input", e => scene.background = e.target.value === "" ? "#000000" : new THREE.Color(e.target.value));
+document.getElementById("enviroment-color").addEventListener("input", e => scene.background = e.target.value === "" ? new THREE.Color("#000000") : new THREE.Color(e.target.value));

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--  -->
+
+    <!-- Disable caching of webapp -->
+    <meta http-equiv='cache-control' content='no-cache'> 
+    <meta http-equiv='expires' content='0'> 
+    <meta http-equiv='pragma' content='no-cache'>
+    <!--  -->
+    
+    <!-- Title -->
+    <title>3D Model Viewer</title>
+    <!--  -->
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/index.css">
+    <!--  -->
+
+    <!-- Scripts -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../three.js/build/three.module.js",
+                "OrbitControls": "../three.js/examples/jsm/controls/OrbitControls.js",
+                "MTLLoader": "../three.js/examples/jsm/loaders/MTLLoader.js",
+                "OBJLoader": "../three.js/examples/jsm/loaders/OBJLoader.js",
+                "STLLoader": "../three.js/examples/jsm/loaders/STLLoader.js",
+                "FBXLoader": "../three.js/examples/jsm/loaders/FBXLoader.js"
+            }
+        }
+    </script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/index.js" defer></script>
+    <script type="module" src="js/uploadFile.js" defer></script>
+    <script src="js/jscolor.min.js" defer></script>
+    <!--  -->
+</head>
+<body>
+    <div id="model-viewer-container">
+        <div id="configuration-panel-container">
+            <div id="configuration-panel-header">
+                <h2 id="configuration-panel-heading">Configuration Panel</h2>
+                <div id="toggle-configuration-panel-btn"><<</div>
+            </div>
+            <div id="configuration-panel-body">
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Model selector</h5>
+                    </div>
+                    <div id="model-list">
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Axes</h5>
+                    </div>
+                    <div class="section-content">
+                        <button id="rotateX" type="button">Rotate X</button>
+                        <button id="rotateY" type="button">Rotate Y</button>
+                        <button id="rotateZ" type="button">Rotate Z</button>
+                    </div>
+                    <div class="section-content">
+                        <input type="number" step="0.01" id="rotationSpeedX" placeholder="X speed..." value="0.01">
+                        <input type="number" step="0.01" id="rotationSpeedY" placeholder="Y speed..." value="0.01">
+                        <input type="number" step="0.01" id="rotationSpeedZ" placeholder="Z speed..." value="0.01">
+                    </div>
+                    <div class="section-content">
+                        <button id="resetRotationX" type="button">Reset X</button>
+                        <button id="resetRotationY" type="button">Reset Y</button>
+                        <button id="resetRotationZ" type="button">Reset Z</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="toggleAxes" type="button">Toggle axes</button>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Perspective</h5>
+                    </div>
+                    <div class="section-content">
+                        <button id="isometricView" type="button">Isometric View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="frontView" type="button">Front View</button>
+                        <button id="rearView" type="button">Rear View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="leftView" type="button">Left View</button>
+                        <button id="rightView" type="button">Right View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="topView" type="button">Top View</button>
+                        <button id="bottomView" type="button">Bottom View</button>
+                    </div>
+                    <div class="section-content">
+                        <button id="resetCamera" type="button">Reset camera</button>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Model</h5>
+                    </div>
+                    <div class="section-content">
+                        <button id="display-edges" type="button" data-display="false">Show edges</button>
+                        <button id="display-wireframe" type="button" data-display="false">Show wireframe</button>
+                    </div>
+                    <div id="loading-meshes"  style="display: none">
+                        <div class="lds-ripple"><div></div><div></div></div>
+                        <p>Loading meshes...</p>
+                    </div>
+                    <div id="meshes">
+                        <p>No model loaded...</p>
+                    </div>
+                </div>
+                <div class="section">
+                    <div class="section-heading">
+                        <h5>Enviroment</h5>
+                    </div>
+                    <div class="section-content">
+                        <label>Background: </label>
+                        <input type="text" class="mesh-color-picker" id="enviroment-color" value="#11121D" data-jscolor="{
+                            position: 'right', width: 200, height: 100,
+                            padding: 10, sliderSize: 25,
+                            borderColor: '#000', controlBorderColor: '#CCC', backgroundColor: '#242424'
+                            }">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="splash">
+            <h1>Upload the model</h1>
+            <p>(currently supports OBJ, STL, FBX)</p>
+
+            <!-- MODEL UPLOAD -->
+            <form>
+                <input id="files" type="file" multiple>
+            </form>
+            
+            <h2>Example models:</h2>
+            <p>
+                <a id="example-car" class="example-model" data-model="example-car.obj" href="#example-car.obj">Car</a><!--
+             --><a id="example-plane" class="example-model" data-model="11803_Airplane_v1_l1.obj" href="#11803_Airplane_v1_l1.obj">Plane</a><!--
+             --><a id="example-building" class="example-model" data-model="building_04.obj" href="#11803_Airplane_v1_l1.obj">Building</a>
+            </p>
+
+        </div>
+        <div id="loading-model" style="display: none">
+            <div class="lds-ripple"><div></div><div></div></div>
+            <p id="model-loaded-percentage"></p>
+        </div>
+    </div>
+</body>
+</html>

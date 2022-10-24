@@ -1,0 +1,289 @@
+body {
+    margin: 0;
+}
+
+div#model-viewer-container canvas {
+    
+}
+
+div#model-viewer-container h1, h2, h3, h4, h5 {
+    padding: 0;
+    margin: 0;
+}
+
+div#model-viewer-container #splash {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    color: #d4e2f3;
+}
+
+div#model-viewer-container #splash p {
+    padding: 0;
+    margin: 5px 0;
+}
+
+div#model-viewer-container a {
+    font-size: 12pt;
+    color: #5ca6ff;
+    transition: all 0.1s;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px;
+}
+
+div#model-viewer-container a:hover {
+    font-size: 12pt;
+    color: #95c5ff;
+}
+
+div#model-viewer-container #splash .example-model {
+
+}
+
+div#model-viewer-container {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    position: relative;
+    z-index: 0;
+    font-family: 'AT Open Sans';
+    background-color: #11121D
+}
+
+div#model-viewer-container div#loading-model {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(2);
+    color: white;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+div#model-viewer-container div#loading-meshes {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+div#model-viewer-container div#configuration-panel-container {
+    font-family: 'AT Open Sans';
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: #1f2126;
+}
+
+div#model-viewer-container div#configuration-panel-header {
+    position: relative;
+}
+
+div#model-viewer-container h2#configuration-panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3375c7;
+    margin: 0;
+    padding: 0;
+    height: 50px;
+    color: #d4e2f3;
+    font-size: 1.25rem;
+}
+
+div#model-viewer-container div#toggle-configuration-panel-btn {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #3375c7;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #b1cff0;
+    font-weight: bold;
+}
+
+div#model-viewer-container div#toggle-configuration-panel-btn:hover {
+    filter: brightness(125%);
+}
+
+div#model-viewer-container div#configuration-panel-body {
+    color: white;
+    height: calc(100% - 50px);
+    border-right: 1px solid #3f444e;
+    overflow-y: auto;
+}
+
+div#model-viewer-container div.section {
+    width: 339px;
+    display: flex;
+    flex-flow: column;
+    padding: 5px;
+}
+
+div#model-viewer-container div.section-heading {
+    display: flex;
+    height: 13px;
+    border: 1px solid #363e56;
+    border-radius: 3px;
+    padding: 5px;
+    justify-content: center;
+    align-items: center;
+    background-color: #242a3a;
+    color: #afd3ff;
+    font-size: 1rem;
+}
+
+div#model-viewer-container div#model-list {
+    text-align: left;
+}
+
+div#model-viewer-container .model-list-element {
+    display: block;
+}
+
+div#model-viewer-container div.section-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+div#model-viewer-container div#meshes {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+div#model-viewer-container label.mesh-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 150px;
+    display: inline-block;
+    font-size: 0.9rem;
+}
+
+div#model-viewer-container button {
+    display: block;
+    width: 100%;
+    height: 35px;
+    margin: 5px 0;
+    outline-style: none;
+    border: none;
+    color: white;
+    background-color: #363636;
+    font-size: 1rem;
+    transition: filter 200ms;
+    font-family: 'AT Open Sans';
+    cursor: pointer;
+}
+
+div#model-viewer-container button:hover, input:hover {
+    filter: brightness(150%);
+}
+
+div#model-viewer-container button#rotateX {
+    border-radius: 3px 0 0 3px;
+    background-color: #9f0000;
+}
+
+div#model-viewer-container button#rotateY {
+    background-color: #009f02;
+}
+
+div#model-viewer-container button#rotateZ {
+    background-color: #00259f;
+    border-radius: 0 3px 3px 0;
+}
+
+div#model-viewer-container input[type="number"], div#model-viewer-container input[type="text"] {
+    display: block;
+    width: 100%;
+    height: 35px;
+    text-align: center;
+    font-family: 'AT Open Sans';
+    font-size: 12pt;
+    margin: 5px 0;
+    outline: none;
+    color: white;
+    border: none;
+    background-color: #363636;
+}
+
+div#model-viewer-container input[type="number"]:hover, div#model-viewer-container input[type="text"]:hover {
+    
+}
+
+div#model-viewer-container input.mesh-color-picker {
+    width: 73px;
+    border: 1px solid #363e56;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Loader icon */
+div#model-viewer-container .lds-ripple {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+div#model-viewer-container .lds-ripple div {
+    position: absolute;
+    border: 4px solid #fff;
+    opacity: 1;
+    border-radius: 50%;
+    animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+div#model-viewer-container .lds-ripple div:nth-child(2) {
+    animation-delay: -0.5s;
+}
+
+@keyframes lds-ripple {
+    0% {
+        top: 36px;
+        left: 36px;
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+    4.9% {
+        top: 36px;
+        left: 36px;
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+    5% {
+        top: 36px;
+        left: 36px;
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+    100% {
+        top: 0px;
+        left: 0px;
+        width: 72px;
+        height: 72px;
+        opacity: 0;
+    }
+}

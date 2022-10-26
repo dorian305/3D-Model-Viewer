@@ -31,8 +31,8 @@ $UPLOAD_DIRECTORY = "../models/";
  */
 $ERROR_CODE = 0; // Default, if code is 0, no error occured.
 $ERROR_MESSAGE = [
-    1 => "File extension is not supported. Make sure to only upload files with extensions: .obj, .mtl, .fbx, .stl, .jpg, png.",
-    2 => "Invalid filename. English - only characters, numbers and [_-.] are allowed.",
+    1 => "File extension is not supported. Make sure to only upload files with extensions: .obj, .mtl, .fbx, .stl, .jpg, png",
+    2 => "Invalid filename. English - only characters, numbers and [ _-.] are allowed.",
     3 => "No files have been selected.",
 ];
 

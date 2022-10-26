@@ -72,20 +72,20 @@ export const loadModel = filename => {
 
     switch(extension){
         case "obj":
-            loadOBJ(file);
+            loadOBJ();
             break;
         case "fbx":
-            loadFBX(file);
+            loadFBX();
             break;
         case "stl":
-            loadSTL(file);
+            loadSTL();
             break;
     }
 
     /**
      * Loading OBJ (with optional MTL).
      */
-    async function loadOBJ(file){
+    async function loadOBJ(){
         /**
          * Checking whether matching MTL file exists.
          */
@@ -141,7 +141,7 @@ export const loadModel = filename => {
     /**
      * Loading FBX.
      */
-    function loadFBX(file){
+    function loadFBX(){
         const fbxLoader = new FBXLoader();
         fbxLoader.load(`../models/${file}.fbx`, object => {
             model = object;
@@ -152,7 +152,7 @@ export const loadModel = filename => {
     /**
      * Loading STL.
      */
-    function loadSTL(file){
+    function loadSTL(){
         const stlLoader = new STLLoader();
         stlLoader.load(`../models/${file}.stl`, object => {
             const material = object.hasColors ? new THREE.MeshPhongMaterial({opacity: object.alpha, vertexColors: true}) : new THREE.MeshPhongMaterial({color: 0xe5e5e5, specular: 0x111111, shininess: 100});
@@ -206,6 +206,11 @@ export const loadModel = filename => {
 
         // Adding object to the scene
         scene.add(model);
+
+        // Updating model list DOM
+        const modelDOMElement = document.querySelector("#model-list");
+        modelDOMElement.innerHTML = "";
+        modelDOMElement.insertAdjacentHTML("beforeend",`<a class="model-list-element">${file}.${extension}</a>`);
     }
 }
 

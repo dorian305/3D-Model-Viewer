@@ -2,7 +2,6 @@ import { loadModel } from "./index.js";
 import { getExtension } from "./index.js";
 
 const fileField = document.querySelector("#files");
-const modelListContainer = document.querySelector("#model-list");
 
 fileField.addEventListener("change", doUpload, false);
 
@@ -142,10 +141,8 @@ async function doUpload(e){
     fileField.value = "";
 
     /**
-     * Load the model and update DOM content with model's name.
+     * Load the model.
      */
-    modelListContainer.innerHTML = "";
-    modelListContainer.insertAdjacentHTML("beforeend",`<a class="model-list-element">${modelList[0]}</a>`);
     loadModel(modelList[0]);
 
     /**

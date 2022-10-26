@@ -1,11 +1,9 @@
 import { loadModel } from "./index.js";
 import { getExtension } from "./index.js";
 
-/**
- * Fetching input field and setting event listener
- * to fire when files are selected.
- */
 const fileField = document.querySelector("#files");
+const modelListContainer = document.querySelector("#model-list");
+
 fileField.addEventListener("change", doUpload, false);
 
 /**
@@ -13,53 +11,90 @@ fileField.addEventListener("change", doUpload, false);
  */
 async function doUpload(e){
     /**
+     * Setting error variable.
+     * Used when checking for errors during file upload.
+     */
+    const error = {
+        code: 0,
+        file: "",
+        message: {
+            1: "File extension is not supported. Make sure to only upload files with extensions: .obj, .mtl, .fbx, .stl, .jpg, png",
+            2: "Invalid filename.<br>English - only characters, numbers and [ _-.] are allowed.",
+            3: "No supported model files detected from the list of uploaded files.<br>Supported model files: .obj, .fbx, .stl",
+            4: "Multiple model files detected from the list of uploaded files, please upload one model.",
+            5: "No files have been selected.",
+        },
+    };
+
+    /**
+     * Allowed file extensions to upload.
+     */
+    const allowedExtensions = ["obj", "mtl", "fbx", "stl", "jpg", "png",];
+
+    /**
      * Counting the number of selected files.
      */
     const numberOfFiles = fileField.files.length;
 
     /**
+     * Save list of all file names, and list of all model names.
+     */
+     const fileList = [];
+     let modelList = [];
+ 
+     [...fileField.files].forEach(file => fileList.push(file.name));
+     modelList = fileList.filter(file => ["obj", "fbx", "stl"].includes(getExtension(file)[1]));
+
+    /**
      * Error checking the files before uploading.
      */
-    let error = {
-        code: 0,
-        file: "",
-        message: {
-            1: "File extension is not supported. Make sure to only upload files with extensions: .obj, .mtl, .fbx, .stl, .jpg, png.",
-            2: "Invalid filename. English - only characters, numbers and [_-.] are allowed.",
-            3: "No files have been selected.",
-        },
-    };
-    [...fileField.files].forEach(file => {
+    for (const filename of fileList){
+        /**
+         * If error code is already set, exit loop.
+         */
+        if (error.code !== 0) break;
+
         /**
          * Checking whether selected files are of allowed extension.
          */;
-        if (!["obj", "mtl", "fbx", "stl", "jpg", "png",].includes(getExtension(file.name)[1])) error.code = 1;
+         if (error.code === 0 && !allowedExtensions.includes(getExtension(filename)[1])) error.code = 1;
 
-        /**
-         * Checking whether selected files are of allowed filename.
-         */
-        if (!(/^[-0-9A-Z_\.\ ]+$/i).test(file.name)) error.code = 2;
-
-        /**
-         * Checking whether no files have been selected.
-         */
-        if (numberOfFiles === 0) error.code = 3;
-
-        /**
-         * Set an error file if any file failed the error check.
-         */
-        if (error.code !== 0) error.file = file.name;
-    });
+         /**
+          * Checking whether selected files are of allowed filename.
+          */
+         if (error.code === 0 && !(/^[-0-9A-Z_\.\ ]+$/i).test(filename)) error.code = 2;
+ 
+         /**
+          * Set an error file to a file that triggered the error.
+          */
+         if (error.code !== 0) error.file = filename;
+    }
 
     /**
-     * If any file failed the error check, exit the function.
+     * Checking whether any model files are uploaded.
+     */
+    if (error.code === 0 && modelList.length === 0) error.code = 3;
+
+    /**
+     * Checking whether multiple model files are uploaded.
+     */
+    if (error.code === 0 && modelList.length > 1) error.code = 4;
+
+    /**
+     * Checking whether no files have been selected.
+     */
+    if (error.code === 0 && numberOfFiles === 0) error.code = 5;
+
+    /**
+     * If error code has been changed, exit the function.
      */
     if (error.code !== 0){
         Swal.fire({
             title: `ERROR ${error.code}`,
-            html: `${error.message[error.code]}<br>Error file: ${error.file}`,
+            html: `${error.message[error.code]}${error.file ? `<br>Error file: ${error.file}` : ""}`,
             icon: "error",
         });
+
         return;
     }
 
@@ -102,39 +137,27 @@ async function doUpload(e){
     }
 
     /**
-     * Filter only model files from array of uploaded files,
-     * and populate model list with the filtered list.
-     */
-    const fileList = [];
-    const modelListContainer = document.querySelector("#model-list");
-
-    [...fileField.files].forEach(file => fileList.push(file.name));
-    const modelList = fileList.filter(file => ["obj", "fbx", "stl"].includes(getExtension(file)[1]));
-
-    modelListContainer.innerHTML = "";
-    modelList.forEach(model => modelListContainer.insertAdjacentHTML("beforeend",`<a class="model-list-element" href="${model}">${model}</a>`));
-
-    /**
      * Clearing file field after upload.
      */
     fileField.value = "";
 
     /**
-     * Close modal when files finish uploading.
+     * Load the model and update DOM content with model's name.
      */
-    Swal.close();
+    modelListContainer.innerHTML = "";
+    modelListContainer.insertAdjacentHTML("beforeend",`<a class="model-list-element">${modelList[0]}</a>`);
+    loadModel(modelList[0]);
 
     /**
-     * Display the first model.
+     * Close popup modal after model finishes uploading.
      */
-    loadModel(modelList[0]);
+    Swal.close();
 }
 
 /**
  * Uploading file to the server.
  */
 async function uploadFile(file){
-
     /**
      * Constructing a Form Data to send to the backend,
      * so the PHP populates $_FILES properly.

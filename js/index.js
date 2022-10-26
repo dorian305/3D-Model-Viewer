@@ -89,7 +89,7 @@ export const loadModel = filename => {
         /**
          * Checking whether matching MTL file exists.
          */
-        fetch(`../models/${file}.mtl`, {method: "HEAD"})
+        fetch(`../example-models/${file}.mtl`, {method: "HEAD"})
         .then(response => {
             if (response.ok){
                 /**
@@ -97,11 +97,11 @@ export const loadModel = filename => {
                  */
                 console.log("Found matching MTL file. Loading OBJ with MTL.");
                 const mtlLoader = new MTLLoader();
-                mtlLoader.load(`../models/${file}.mtl`, materials => {
+                mtlLoader.load(`../example-models/${file}.mtl`, materials => {
                     materials.preload();
                     const objLoader = new OBJLoader();
                     objLoader.setMaterials(materials);
-                    objLoader.load(`../models/${file}.obj`, object => {
+                    objLoader.load(`../example-models/${file}.obj`, object => {
                         model = object;
                         afterModelLoad();
                     },
@@ -124,7 +124,7 @@ export const loadModel = filename => {
              */
             console.warn(error);
             const objLoader = new OBJLoader();
-            objLoader.load(`../models/${file}.obj`, object => {
+            objLoader.load(`../example-models/${file}.obj`, object => {
                 model = object;
                 afterModelLoad();
             },
@@ -143,7 +143,7 @@ export const loadModel = filename => {
      */
     function loadFBX(){
         const fbxLoader = new FBXLoader();
-        fbxLoader.load(`../models/${file}.fbx`, object => {
+        fbxLoader.load(`../example-models/${file}.fbx`, object => {
             model = object;
             afterModelLoad();
         });
@@ -154,7 +154,7 @@ export const loadModel = filename => {
      */
     function loadSTL(){
         const stlLoader = new STLLoader();
-        stlLoader.load(`../models/${file}.stl`, object => {
+        stlLoader.load(`../example-models/${file}.stl`, object => {
             const material = object.hasColors ? new THREE.MeshPhongMaterial({opacity: object.alpha, vertexColors: true}) : new THREE.MeshPhongMaterial({color: 0xe5e5e5, specular: 0x111111, shininess: 100});
             model = new THREE.Mesh(object, material);
             afterModelLoad();
@@ -211,6 +211,9 @@ export const loadModel = filename => {
         const modelDOMElement = document.querySelector("#model-list");
         modelDOMElement.innerHTML = "";
         modelDOMElement.insertAdjacentHTML("beforeend",`<a class="model-list-element">${file}.${extension}</a>`);
+
+        // Delete uploaded files from temp folder.
+        fetch(`../php/deleteUploaded.php`);
     }
 }
 

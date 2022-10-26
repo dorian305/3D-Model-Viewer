@@ -24,7 +24,7 @@ $ALLOWED_FILE_EXTENSIONS = ["obj", "mtl", "fbx", "stl", "jpg", "png"];
 /**
  * Where the uploaded files are stored.
  */
-$UPLOAD_DIRECTORY = "../models/";
+$UPLOAD_DIRECTORY = "../upload-temp/";
 
 /**
  * Error messages that can occur during upload.

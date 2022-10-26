@@ -287,3 +287,27 @@ div#model-viewer-container .lds-ripple div:nth-child(2) {
         opacity: 0;
     }
 }
+
+div#model-information {
+    z-index: 2;
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: white;
+    font-size: 0.8rem;
+    padding: 10px;
+    width: 150px;
+}
+
+div#model-information h5 {
+    font-size: 0.9rem;
+    margin: 0 0 5px 0;
+}
+
+div#model-information p {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+}

@@ -204,6 +204,11 @@ export const loadModel = filename => {
         // Installing JSColor picker after the new pickers have been created dinamically
         jscolor.install();
 
+        // Updating model information
+        const [vertices, triangles] = getModelInformation(model);
+        document.querySelector(`#vertex-number`).innerText = vertices;
+        document.querySelector(`#triangle-number`).innerText = triangles;
+
         // Adding object to the scene
         scene.add(model);
 
@@ -480,4 +485,28 @@ export const getExtension = filename => {
     const file = filename.substr(0, dotIndex);
     const extension = filename.substr(dotIndex + 1, filename.length);
     return [file, extension];
+}
+
+/**
+ * Displaying model information on load.
+ */
+export const getModelInformation = object => {
+    let vertices = 0;
+    let triangles = 0;
+    object.traverseVisible(model => {
+        if (model.isMesh){
+            const geometry = model.geometry;
+
+            vertices += geometry.attributes.position.count;
+
+            if (geometry.index){
+                triangles += geometry.index.count / 3;
+            }
+            else {
+                triangles += geometry.attributes.position.count / 3;
+            }
+        }
+    });
+
+    return [vertices, triangles];
 }

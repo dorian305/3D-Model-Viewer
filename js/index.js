@@ -224,6 +224,9 @@ export const loadModel = (filename, id = null) => {
         // Adding object to the scene
         scene.add(model);
 
+        // Start rendering
+        animate();
+
         // Updating model list DOM
         const modelDOMElement = document.querySelector("#model-list");
         modelDOMElement.innerHTML = "";
@@ -280,7 +283,6 @@ const animate = () => {
     if (enableRotationY) model.rotation.y += rotationSpeedY;
     if (enableRotationZ) model.rotation.z += rotationSpeedZ;
 }
-animate(); // Start rendering
 
 /*
     Axes controls
@@ -291,10 +293,14 @@ document.getElementById("rotationSpeedX").addEventListener("input", e => {
 });
 // Rotate along X axis
 document.getElementById("rotateX").addEventListener("click", e => {
+    if (!model) return;
+
     if (rotationSpeedX != 0) enableRotationX = !enableRotationX;
 });
 // Resetting rotation on X
 document.getElementById("resetRotationX").addEventListener("click", e => {
+    if (!model) return;
+
     model.rotation.x = 0;
     rotationSpeedX = 0;
     enableRotationX = false;
@@ -306,10 +312,14 @@ document.getElementById("rotationSpeedY").addEventListener("input", e => {
 });
 // Rotate along Y axis
 document.getElementById("rotateY").addEventListener("click", e => {
+    if (!model) return;
+
     if (rotationSpeedY != 0) enableRotationY = !enableRotationY;
 });
 // Resetting rotation on Y
 document.getElementById("resetRotationY").addEventListener("click", e => {
+    if (!model) return;
+
     model.rotation.y = 0;
     rotationSpeedY = 0;
     enableRotationY = false;
@@ -321,10 +331,14 @@ document.getElementById("rotationSpeedZ").addEventListener("input", e => {
 });
 // Rotate along Z axis
 document.getElementById("rotateZ").addEventListener("click", e => {
+    if (!model) return;
+
     if (rotationSpeedZ != 0) enableRotationZ = !enableRotationZ;
 });
 // Resetting rotation on Z
 document.getElementById("resetRotationZ").addEventListener("click", e => {
+    if (!model) return;
+
     model.rotation.z = 0;
     rotationSpeedZ = 0;
     enableRotationZ = false;
@@ -332,6 +346,8 @@ document.getElementById("resetRotationZ").addEventListener("click", e => {
 });
 // Toggling axes
 document.getElementById("toggleAxes").addEventListener("click", e => {
+    if (!model) return;
+
     displayAxes = !displayAxes;
     displayAxes ? scene.add(axes) : scene.remove(axes);
 });
@@ -346,7 +362,11 @@ document.getElementById("leftView").addEventListener("click", e => camera.positi
 document.getElementById("rightView").addEventListener("click", e => camera.position.set(cameraOffset.x, 0, 0));
 document.getElementById("topView").addEventListener("click", e => camera.position.set(0, cameraOffset.y, 0));
 document.getElementById("bottomView").addEventListener("click", e => camera.position.set(0, -cameraOffset.y, 0));
-document.getElementById("resetCamera").addEventListener("click", e => cameraOffset = fitCameraToObject(camera, model, controls));
+document.getElementById("resetCamera").addEventListener("click", e => {
+    if (!model) return;
+    
+    cameraOffset = fitCameraToObject(camera, model, controls);
+});
 
 /*
     Configuration panel
@@ -373,6 +393,11 @@ document.getElementById("toggle-configuration-panel-btn").addEventListener("clic
 
 // Toggle wireframe
 document.getElementById("display-wireframe").addEventListener("click", e => {
+    /**
+     * Model is not defined, exit function.
+     */
+    if (!model) return;
+
     const btn = e.target;
     let display = btn.getAttribute("data-display") === "true"; // Convert string representation to a boolean
 
@@ -441,6 +466,11 @@ const initMeshesCheckbox = () => {
 }
 // Toggle Edges
 document.getElementById("display-edges").addEventListener("click", e => {
+    /**
+     * Model is not loaded, exit function.
+     */
+    if (!model) return;
+
     const btn = e.target
     let display = btn.getAttribute("data-display") === "true"; // Convert string representation to a boolean
 

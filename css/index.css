@@ -54,7 +54,7 @@ div#model-viewer-container {
     height: 100vh;
     position: relative;
     z-index: 0;
-    font-family: 'AT Open Sans';
+    font-family: 'Noto Sans', sans-serif;
     background-color: #11121D
 }
 
@@ -79,7 +79,7 @@ div#model-viewer-container div#loading-meshes {
 }
 
 div#model-viewer-container div#configuration-panel-container {
-    font-family: 'AT Open Sans';
+    font-family: 'Noto Sans', sans-serif;
     position: absolute;
     z-index: 2;
     top: 0;
@@ -196,7 +196,7 @@ div#model-viewer-container button {
     background-color: #363636;
     font-size: 1rem;
     transition: filter 200ms;
-    font-family: 'AT Open Sans';
+    font-family: 'Noto Sans', sans-serif;
     cursor: pointer;
 }
 
@@ -223,7 +223,7 @@ div#model-viewer-container input[type="number"], div#model-viewer-container inpu
     width: 100%;
     height: 35px;
     text-align: center;
-    font-family: 'AT Open Sans';
+    font-family: 'Noto Sans', sans-serif;
     font-size: 12pt;
     margin: 5px 0;
     outline: none;

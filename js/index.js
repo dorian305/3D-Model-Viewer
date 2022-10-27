@@ -58,14 +58,28 @@ export const fitCameraToObject = (camera, object, orbitControls, offset) => {
 /*
     Loading model
 */
-export const loadModel = filename => {
-    
-    // Removing splash div on first model load
-    document.querySelector("#splash")?.remove();
+export const loadModel = (filename, id = null) => {
+    /**
+     * If id argument is defined, then the example model has been clicked.
+     * Set the folder to load resources from to: `example-models`.
+     * Otherwise, a file has been uploaded to: `upload-temp`.
+     */
+    const modelDirectory = id ? `example-models` : `upload-temp`;
 
-    // Displaying loading
+    // Hiding splash screen and displaying loading model.
+    document.querySelector("#splash")?.remove();
     document.querySelector("#loading-model").style.display = "";
-    document.querySelector("#loading-meshes").style.display = "";
+
+    /**
+     * Displaying loading icon in meshList.
+     */
+    const meshList = document.querySelector(`#meshes`);
+    meshList.innerHTML = "";
+    meshList.insertAdjacentHTML(`beforeend`,
+    `<div id="loading-meshes">
+        <div class="lds-ripple"><div></div><div></div></div>
+        <p>Loading mesh list...</p>
+    </div>`);
 
     // Extracting model extension
     const [file, extension] = getExtension(filename);
@@ -89,7 +103,7 @@ export const loadModel = filename => {
         /**
          * Checking whether matching MTL file exists.
          */
-        fetch(`../example-models/${file}.mtl`, {method: "HEAD"})
+        fetch(`../${modelDirectory}/${file}.mtl`, {method: "HEAD"})
         .then(response => {
             if (response.ok){
                 /**
@@ -97,11 +111,11 @@ export const loadModel = filename => {
                  */
                 console.log("Found matching MTL file. Loading OBJ with MTL.");
                 const mtlLoader = new MTLLoader();
-                mtlLoader.load(`../example-models/${file}.mtl`, materials => {
+                mtlLoader.load(`../${modelDirectory}/${file}.mtl`, materials => {
                     materials.preload();
                     const objLoader = new OBJLoader();
                     objLoader.setMaterials(materials);
-                    objLoader.load(`../example-models/${file}.obj`, object => {
+                    objLoader.load(`../${modelDirectory}/${file}.obj`, object => {
                         model = object;
                         afterModelLoad();
                     },
@@ -124,7 +138,7 @@ export const loadModel = filename => {
              */
             console.warn(error);
             const objLoader = new OBJLoader();
-            objLoader.load(`../example-models/${file}.obj`, object => {
+            objLoader.load(`../${modelDirectory}/${file}.obj`, object => {
                 model = object;
                 afterModelLoad();
             },
@@ -143,7 +157,7 @@ export const loadModel = filename => {
      */
     function loadFBX(){
         const fbxLoader = new FBXLoader();
-        fbxLoader.load(`../example-models/${file}.fbx`, object => {
+        fbxLoader.load(`../${modelDirectory}/${file}.fbx`, object => {
             model = object;
             afterModelLoad();
         });
@@ -154,7 +168,7 @@ export const loadModel = filename => {
      */
     function loadSTL(){
         const stlLoader = new STLLoader();
-        stlLoader.load(`../example-models/${file}.stl`, object => {
+        stlLoader.load(`../${modelDirectory}/${file}.stl`, object => {
             const material = object.hasColors ? new THREE.MeshPhongMaterial({opacity: object.alpha, vertexColors: true}) : new THREE.MeshPhongMaterial({color: 0xe5e5e5, specular: 0x111111, shininess: 100});
             model = new THREE.Mesh(object, material);
             afterModelLoad();
@@ -193,9 +207,7 @@ export const loadModel = filename => {
         // Fitting camera to the object
         cameraOffset = fitCameraToObject(camera, model, controls);
     
-        // Removing loading elements
-        document.getElementById("loading-model").remove();
-        document.getElementById("loading-meshes").remove();
+        document.querySelector(`#loading-model`).style.display = 'none';
 
         // Initializing meshes checkboxes and color pickers
         initMeshesCheckbox();
@@ -215,7 +227,7 @@ export const loadModel = filename => {
         // Updating model list DOM
         const modelDOMElement = document.querySelector("#model-list");
         modelDOMElement.innerHTML = "";
-        modelDOMElement.insertAdjacentHTML("beforeend",`<a class="model-list-element">${file}.${extension}</a>`);
+        modelDOMElement.insertAdjacentHTML("beforeend",`Name: <a class="model-list-element">${file}.${extension}</a>`);
 
         // Delete uploaded files from temp folder.
         fetch(`../php/deleteUploaded.php`);
@@ -473,7 +485,7 @@ document.getElementById("enviroment-color").addEventListener("input", e => scene
  */
 document.querySelectorAll(".example-model").forEach(link => {
     link.addEventListener("click", e => {
-        loadModel(e.target.getAttribute("data-model"));
+        loadModel(e.target.getAttribute("data-model"), e.target.getAttribute("id"));
     });
 });
 

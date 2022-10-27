@@ -156,7 +156,7 @@ div#model-viewer-container div#model-list {
 }
 
 div#model-viewer-container .model-list-element {
-    display: block;
+    display: inline-block;
 }
 
 div#model-viewer-container div.section-content {
@@ -168,6 +168,11 @@ div#model-viewer-container div.section-content {
 div#model-viewer-container div#meshes {
     max-height: 200px;
     overflow-y: auto;
+    border: 1px solid #3f444e;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: #26292e;
+    margin-top: 5px;
 }
 
 div#model-viewer-container label.mesh-name {
@@ -177,6 +182,7 @@ div#model-viewer-container label.mesh-name {
     width: 150px;
     display: inline-block;
     font-size: 0.9rem;
+    text-align: left;
 }
 
 div#model-viewer-container button {

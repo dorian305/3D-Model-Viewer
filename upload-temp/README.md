@@ -1,0 +1,1 @@
+- Uploaded files are temporarily stored here and deleted afterwards.

@@ -255,8 +255,8 @@ const moduleWrapper = document.querySelector("#model-viewer-container");
 */
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, moduleWrapper.clientWidth / moduleWrapper.clientHeight, 0.1, 1000);
-const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
-const pointLight = new THREE.PointLight(0xffffff, 0.8);
+const ambientLight = new THREE.AmbientLight(0xcccccc);
+const pointLight = new THREE.PointLight(0xffffff);
 const renderer = new THREE.WebGLRenderer();
 const controls = new OrbitControls(camera, renderer.domElement);
 const axes = new THREE.AxesHelper(10000);

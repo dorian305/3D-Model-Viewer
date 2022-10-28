@@ -13,7 +13,7 @@ import { FBXLoader } from "FBXLoader";
 */
 export const fitCameraToObject = (camera, object, orbitControls, offset) => {
     const boundingBox = new THREE.Box3();
-    boundingBox.setFromObject( object );
+    boundingBox.setFromObject(object);
 
     const size = new THREE.Vector3();
     boundingBox.getSize(size);
@@ -206,8 +206,6 @@ export const loadModel = (filename, id = null) => {
 
         // Fitting camera to the object
         cameraOffset = fitCameraToObject(camera, model, controls);
-    
-        document.querySelector(`#loading-model`).style.display = 'none';
 
         // Initializing meshes checkboxes and color pickers
         initMeshesCheckbox();
@@ -216,24 +214,27 @@ export const loadModel = (filename, id = null) => {
         // Installing JSColor picker after the new pickers have been created dinamically
         jscolor.install();
 
+        // Adding object to the scene
+        scene.add(model);
+        
+        // Start rendering
+        animate();
+        
+        // Delete uploaded files from temp folder.
+        fetch(`../php/deleteUploaded.php`);
+
+        // Removing model loading icon.
+        document.querySelector(`#loading-model`).style.display = 'none';
+
         // Updating model information
         const [vertices, triangles] = getModelInformation(model);
         document.querySelector(`#vertex-number`).innerText = vertices;
         document.querySelector(`#triangle-number`).innerText = triangles;
 
-        // Adding object to the scene
-        scene.add(model);
-
-        // Start rendering
-        animate();
-
         // Updating model list DOM
         const modelDOMElement = document.querySelector("#model-list");
         modelDOMElement.innerHTML = "";
         modelDOMElement.insertAdjacentHTML("beforeend",`Name: <a class="model-list-element">${file}.${extension}</a>`);
-
-        // Delete uploaded files from temp folder.
-        fetch(`../php/deleteUploaded.php`);
     }
 }
 
@@ -255,8 +256,8 @@ const moduleWrapper = document.querySelector("#model-viewer-container");
 */
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, moduleWrapper.clientWidth / moduleWrapper.clientHeight, 0.1, 1000);
-const ambientLight = new THREE.AmbientLight(0xcccccc);
-const pointLight = new THREE.PointLight(0xffffff);
+const ambientLight = new THREE.AmbientLight(0xcccccc, 0.4);
+const pointLight = new THREE.PointLight(0xffffff, 0.8);
 const renderer = new THREE.WebGLRenderer();
 const controls = new OrbitControls(camera, renderer.domElement);
 const axes = new THREE.AxesHelper(10000);
@@ -268,10 +269,9 @@ renderer.domElement.id = "threejs-canvas";
 scene.add(ambientLight);
 scene.add(camera);
 scene.background = new THREE.Color(document.getElementById("enviroment-color").value);
-if (displayAxes) scene.add(axes);
-
-// loadModel();
-
+if (displayAxes){
+    scene.add(axes);
+}
 // Rendering
 const animate = () => {
     requestAnimationFrame(animate);

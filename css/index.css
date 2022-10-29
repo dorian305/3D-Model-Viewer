@@ -81,7 +81,7 @@ div#model-viewer-container div#loading-meshes {
 div#model-viewer-container div#configuration-panel-container {
     font-family: 'Noto Sans', sans-serif;
     position: absolute;
-    z-index: 2;
+    z-index: 10;
     top: 0;
     left: 0;
     height: 100%;

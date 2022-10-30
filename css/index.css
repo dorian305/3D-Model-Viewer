@@ -120,6 +120,12 @@ div#model-viewer-container div#toggle-configuration-panel-btn {
     font-weight: bold;
 }
 
+.active {
+    filter: brightness(150%);
+    background-color: #37466e !important;
+    border: 1px solid #607abf !important;
+}
+
 div#model-viewer-container div#toggle-configuration-panel-btn:hover {
     filter: brightness(125%);
 }

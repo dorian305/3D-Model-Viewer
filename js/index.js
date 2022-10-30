@@ -353,19 +353,55 @@ document.getElementById("toggleAxes").addEventListener("click", e => {
 });
 
 /*
-    Perspective controls
+    Camera perspective controls.
 */
-document.getElementById("isometricView").addEventListener("click", e => camera.position.set(cameraOffset.x, cameraOffset.y, cameraOffset.z));
-document.getElementById("frontView").addEventListener("click", e => camera.position.set(0, 0, cameraOffset.z));
-document.getElementById("rearView").addEventListener("click", e => camera.position.set(0, 0, -cameraOffset.z));
-document.getElementById("leftView").addEventListener("click", e => camera.position.set(-cameraOffset.x, 0, 0));
-document.getElementById("rightView").addEventListener("click", e => camera.position.set(cameraOffset.x, 0, 0));
-document.getElementById("topView").addEventListener("click", e => camera.position.set(0, cameraOffset.y, 0));
-document.getElementById("bottomView").addEventListener("click", e => camera.position.set(0, -cameraOffset.y, 0));
+/**
+ * Resetting perspective camera.
+ */
 document.getElementById("resetCamera").addEventListener("click", e => {
     if (!model) return;
-    
     cameraOffset = fitCameraToObject(camera, model, controls);
+});
+const perspectiveButtons = document.querySelectorAll(".perspective-button");
+perspectiveButtons.forEach(perspectiveButton => {
+    perspectiveButton.addEventListener("click", e => {
+        /**
+         * If model is not defined, exit function.
+         */
+        if (!model) return;
+
+        /**
+         * Fetching clicked perspective button.
+         */
+        const button = e.target;
+
+        /**
+         * Removing active class from all buttons,
+         * and adding active class to the clicked button.
+         * Removing titles of inactive buttons,
+         * and adding title to the active button.
+         */
+        perspectiveButtons.forEach(button => {
+            button.classList.remove("active")
+            button.removeAttribute("title");
+        });
+        button.classList.add("active");
+        button.setAttribute("title", "Active perspective.");
+
+        /**
+         * Setting key value pairs depending on the perspective button clicked.
+         */
+        const btnValue = {
+            isometricView: [cameraOffset.x, cameraOffset.y, cameraOffset.z],
+            frontView: [0, 0, cameraOffset.z],
+            rearView: [0, 0, -cameraOffset.z],
+            leftView: [-cameraOffset.x, 0, 0],
+            rightView: [cameraOffset.x, 0, 0],
+            topView: [0, cameraOffset.y, 0],
+            bottomView: [0, -cameraOffset.y, 0],
+        };
+        camera.position.set(btnValue[button.id][0], btnValue[button.id][1], btnValue[button.id][2]);
+    });
 });
 
 /*

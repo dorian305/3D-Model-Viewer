@@ -51,7 +51,7 @@ export const fitCameraToObject = (camera, object, orbitControls, offset) => {
     return {
         x: camera.position.x,
         y: camera.position.y,
-        z: camera.position.z
+        z: camera.position.z,
     };
 };
 
@@ -402,6 +402,24 @@ perspectiveButtons.forEach(perspectiveButton => {
         };
         camera.position.set(btnValue[button.id][0], btnValue[button.id][1], btnValue[button.id][2]);
     });
+});
+
+/**
+ * When orbit controls manually moves with mouse,
+ * display updated camera properties.
+ */
+const cameraSpan = {
+    x: document.querySelector("#camera-x"),
+    y: document.querySelector("#camera-y"),
+    z: document.querySelector("#camera-z"),
+    zoom: document.querySelector("#camera-zoom"),
+
+};
+controls.addEventListener("change", e => {
+    cameraSpan.x.innerText = camera.position.x.toFixed(2);
+    cameraSpan.y.innerText = camera.position.y.toFixed(2);
+    cameraSpan.z.innerText = camera.position.z.toFixed(2);
+    cameraSpan.zoom.innerText = controls.target.distanceTo(controls.object.position).toFixed(2);
 });
 
 /*

@@ -361,6 +361,9 @@ document.getElementById("toggleAxes").addEventListener("click", e => {
 document.getElementById("resetCamera").addEventListener("click", e => {
     if (!model) return;
     cameraOffset = fitCameraToObject(camera, model, controls);
+    perspectiveButtons.forEach(button => {
+        button.classList.remove("active");
+    });
 });
 const perspectiveButtons = document.querySelectorAll(".perspective-button");
 perspectiveButtons.forEach(perspectiveButton => {

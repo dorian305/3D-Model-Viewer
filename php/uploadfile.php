@@ -1,9 +1,5 @@
 <?php
 
-if (!isset($_FILES["file"])){
-    exit("Script execution forbidden.");
-}
-
 /**
  * Printing formatted data for readability.
  */

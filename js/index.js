@@ -220,8 +220,8 @@ export const loadModel = (filename, id = null) => {
         // Start rendering
         animate();
         
-        // // Delete uploaded files from temp folder.
-        // fetch(`../php/deleteUploaded.php`);
+        // Delete uploaded files from temp folder.
+        fetch(`../php/deleteUploaded.php`);
 
         // Removing model loading icon.
         document.querySelector(`#loading-model`).style.display = 'none';

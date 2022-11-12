@@ -26,6 +26,11 @@ function check_filename($name){
 $ALLOWED_FILE_EXTENSIONS = ["obj", "mtl", "fbx", "stl", "jpg", "png"];
 
 /**
+ * Maximum file size of uploaded model.
+ */
+$FILE_SIZE_MAX = 104_857_600;
+
+/**
  * Where the uploaded files are stored.
  */
 $UPLOAD_DIRECTORY = "../upload-temp/";
@@ -37,7 +42,8 @@ $ERROR_CODE = 0; // Default, if code is 0, no error occured.
 $ERROR_MESSAGE = [
     1 => "File extension is not supported. Make sure to only upload files with extensions: .obj, .mtl, .fbx, .stl, .jpg, png",
     2 => "Invalid filename. English - only characters, numbers and [ _-.] are allowed.",
-    3 => "No files have been selected.",
+    3 => "File size is too big. Max upload size is 100MB.",
+    4 => "No files have been selected.",
 ];
 
 /**
@@ -56,12 +62,17 @@ if (isset($_FILES["file"]) and is_uploaded_file($_FILES["file"]["tmp_name"])){
     if (!check_filename($_FILES["file"]["name"])){
         $ERROR_CODE = 2;
     }
+
+    // Update error code if filesize > 100MB.
+    if($_FILES["file"]["size"] > $FILE_SIZE_MAX){
+        $ERROR_CODE = 3;
+    }
 }
 /**
  * Update error code if no files uploaded.
  */
 else {
-    $ERROR_CODE = 3;
+    $ERROR_CODE = 4;
 }
 
 /**

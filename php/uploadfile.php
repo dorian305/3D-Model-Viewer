@@ -43,10 +43,7 @@ $ERROR_MESSAGE = [
 /**
  * Validating the uploaded file.
  */
-if (isset($_FILES["file"]) and is_uploaded_file($_FILES["file"]["tmp_name"])){
-    // Extract MIME type.
-    $mime_type = mime_content_type($_FILES["file"]["tmp_name"]);
-    
+if (isset($_FILES["file"]) and !is_uploaded_file($_FILES["file"]["tmp_name"])){
     // Extract extension
     $file_extension = pathinfo($_FILES["file"]["name"], PATHINFO_EXTENSION);
     

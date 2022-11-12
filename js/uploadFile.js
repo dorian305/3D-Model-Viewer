@@ -170,7 +170,15 @@ async function uploadFile(file){
         method: "POST",
         body: form,
     }).then(response => {
-        return response.json();
+        try {
+            return response.json();
+        } catch (e) {
+            Swal.fire({
+                title: `An error occured`,
+                html: `Error: ${e}.<br>Error file: ${file.name}`,
+                icon: "error",
+            });
+        }
     });
 
     return data;

@@ -448,7 +448,7 @@ document.getElementById("toggle-configuration-panel-btn").addEventListener("clic
     // Setting container attribute to visible or hidden
     cp.setAttribute("data-visibility", parseInt(window.getComputedStyle(cp).getPropertyValue("left")) === 0 ? "hidden": "visible");
 
-    // Toggling control panel
+    // Toggling CP
     cp.style.left = `${ style[cp.getAttribute("data-visibility")].cpLeft }px`;
     btn.innerText = `${ style[cp.getAttribute("data-visibility")].btnText }`;
     btn.style.right = `${ style[cp.getAttribute("data-visibility")].btnRight }px`;

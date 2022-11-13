@@ -235,6 +235,14 @@ export const loadModel = (filename, id = null) => {
         const modelDOMElement = document.querySelector("#model-list");
         modelDOMElement.innerHTML = "";
         modelDOMElement.insertAdjacentHTML("beforeend",`Name: <a class="model-list-element">${file}.${extension}</a>`);
+
+        /**
+         * SMALL HACK:
+         * Simulate clicking on configuration panel button twice to open it and close
+         * on model load, so the scroll bar of the configuration panel container remains hidden.
+         */
+         cpBtn.click();
+         cpBtn.click();
     }
 }
 
@@ -430,18 +438,18 @@ controls.addEventListener("change", e => {
 */
 // Toggle CP visibility
 const cp = document.getElementById("configuration-panel-container");
-document.getElementById("toggle-configuration-panel-btn").addEventListener("click", e => {
-    const btn = e.target;
+const cpBtn = document.getElementById("toggle-configuration-panel-btn")
+cpBtn.addEventListener("click", e => {
     const style = {
         hidden: {
             cpLeft: -cp.clientWidth,
-            btnRight: -btn.clientWidth,
-            btnText: `>>`,
+            cpBtnRight: -cpBtn.clientWidth,
+            cpBtnText: `>>`,
         },
         visible: {
             cpLeft: 0,
-            btnRight: 0,
-            btnText: `<<`,
+            cpBtnRight: 0,
+            cpBtnText: `<<`,
         },
     }
 
@@ -450,8 +458,8 @@ document.getElementById("toggle-configuration-panel-btn").addEventListener("clic
 
     // Toggling CP
     cp.style.left = `${ style[cp.getAttribute("data-visibility")].cpLeft }px`;
-    btn.innerText = `${ style[cp.getAttribute("data-visibility")].btnText }`;
-    btn.style.right = `${ style[cp.getAttribute("data-visibility")].btnRight }px`;
+    cpBtn.innerText = `${ style[cp.getAttribute("data-visibility")].cpBtnText }`;
+    cpBtn.style.right = `${ style[cp.getAttribute("data-visibility")].cpBtnRight }px`;
 });
 
 // Toggle wireframe

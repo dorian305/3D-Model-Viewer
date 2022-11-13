@@ -366,7 +366,8 @@ document.getElementById("toggleAxes").addEventListener("click", e => {
 /**
  * Resetting perspective camera.
  */
-document.getElementById("resetCamera").addEventListener("click", e => {
+const resetCameraBtn = document.getElementById("resetCamera");
+resetCameraBtn.addEventListener("click", e => {
     if (!model) return;
     cameraOffset = fitCameraToObject(camera, model, controls);
     perspectiveButtons.forEach(button => {
@@ -385,6 +386,11 @@ perspectiveButtons.forEach(perspectiveButton => {
          * Fetching clicked perspective button.
          */
         const button = e.target;
+        
+        /**
+         * Reset camera before changing perspective.
+         */
+        resetCameraBtn.click();
 
         /**
          * Removing active class from all buttons,

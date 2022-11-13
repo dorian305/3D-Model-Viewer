@@ -432,20 +432,26 @@ controls.addEventListener("change", e => {
 const cp = document.getElementById("configuration-panel-container");
 document.getElementById("toggle-configuration-panel-btn").addEventListener("click", e => {
     const btn = e.target;
+    const style = {
+        hidden: {
+            cpLeft: -cp.clientWidth,
+            btnRight: -btn.clientWidth,
+            btnText: `>>`,
+        },
+        visible: {
+            cpLeft: 0,
+            btnRight: 0,
+            btnText: `<<`,
+        },
+    }
 
-    // Hide panel
-    if (parseInt(window.getComputedStyle(cp).getPropertyValue("left")) === 0){
-        cp.style.left = `${-cp.clientWidth}px`;
-        btn.innerText = ">>";
-        btn.style.right = `${-btn.clientWidth}px`;
-    }
-    
-    // Show panel
-    else {
-        cp.style.left = `0px`;
-        btn.innerText = "<<";
-        btn.style.right = `0px`;
-    }
+    // Setting container attribute to visible or hidden
+    cp.setAttribute("data-visibility", parseInt(window.getComputedStyle(cp).getPropertyValue("left")) === 0 ? "hidden": "visible");
+
+    // Toggling control panel
+    cp.style.left = `${ style[cp.getAttribute("data-visibility")].cpLeft }px`;
+    btn.innerText = `${ style[cp.getAttribute("data-visibility")].btnText }`;
+    btn.style.right = `${ style[cp.getAttribute("data-visibility")].btnRight }px`;
 });
 
 // Toggle wireframe

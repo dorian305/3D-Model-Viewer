@@ -254,7 +254,7 @@ let enableRotationZ = false;
 let rotationSpeedX = parseFloat(document.getElementById("rotationSpeedX").value);
 let rotationSpeedY = parseFloat(document.getElementById("rotationSpeedX").value);
 let rotationSpeedZ = parseFloat(document.getElementById("rotationSpeedX").value);
-let displayAxes = true;
+let displayAxes = false;
 let cameraOffset = {};
 let edges = [];
 const moduleWrapper = document.querySelector("#model-viewer-container");
@@ -433,9 +433,9 @@ const cameraSpan = {
 
 };
 controls.addEventListener("change", e => {
-    cameraSpan.x.innerText = camera.position.x.toFixed(2);
+    cameraSpan.x.innerText = -camera.position.x.toFixed(2); // Negative multiplier to fix X coordinate value.
     cameraSpan.y.innerText = camera.position.y.toFixed(2);
-    cameraSpan.z.innerText = camera.position.z.toFixed(2);
+    cameraSpan.z.innerText = -camera.position.z.toFixed(2); // Negative multiplier to fix Z coordinate value.
     cameraSpan.zoom.innerText = controls.target.distanceTo(controls.object.position).toFixed(2);
 });
 

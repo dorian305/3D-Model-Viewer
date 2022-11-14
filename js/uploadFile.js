@@ -1,5 +1,6 @@
 import { loadModel } from "./index.js";
 import { getExtension } from "./index.js";
+import { customClass } from "./swalCustomClass.js";
 
 const fileField = document.querySelector("#files");
 
@@ -90,8 +91,9 @@ async function doUpload(e){
     if (error.code !== 0){
         Swal.fire({
             title: `ERROR ${error.code}`,
-            html: `${error.message[error.code]}${error.file ? `<br>Error file: ${error.file}` : ""}`,
+            html: `${error.message[error.code]}${error.file ? `<br><strong>Error file:</strong> ${error.file}` : ""}`,
             icon: "error",
+            customClass : customClass,
         });
 
         return;
@@ -103,6 +105,7 @@ async function doUpload(e){
     Swal.fire({
         title: `Uploading...`,
         html: `<div id="swal-upload-html"></div>`,
+        customClass : customClass,
     });
     Swal.showLoading(); // Display loading icon.
     for (let i = 0; i < numberOfFiles; i++){
@@ -123,8 +126,9 @@ async function doUpload(e){
         if (response.error_code !== 0){
             Swal.fire({
                 title: `ERROR ${response.error_code}`,
-                html: `${response.error_message}<br>Error file: ${response.file}`,
+                html: `${response.error_message}<br><strong>Error file:</strong> ${response.file}`,
                 icon: "error",
+                customClass : customClass,
             });
             return;
         }
@@ -175,8 +179,9 @@ async function uploadFile(file){
         } catch (e) {
             Swal.fire({
                 title: `An error occured`,
-                html: `Error: ${e}.<br>Error file: ${file.name}`,
+                html: `Error: ${e}.<br><strong>Error file:</strong> ${file.name}`,
                 icon: "error",
+                customClass : customClass,
             });
         }
     });

@@ -433,9 +433,9 @@ const cameraSpan = {
 
 };
 controls.addEventListener("change", e => {
-    cameraSpan.x.innerText = -camera.position.x.toFixed(2); // Negative multiplier to fix X coordinate value.
+    cameraSpan.x.innerText = camera.position.x.toFixed(2);
     cameraSpan.y.innerText = camera.position.y.toFixed(2);
-    cameraSpan.z.innerText = -camera.position.z.toFixed(2); // Negative multiplier to fix Z coordinate value.
+    cameraSpan.z.innerText = camera.position.z.toFixed(2);
     cameraSpan.zoom.innerText = controls.target.distanceTo(controls.object.position).toFixed(2);
 });
 

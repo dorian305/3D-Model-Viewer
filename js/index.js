@@ -310,9 +310,8 @@ document.getElementById("resetRotationX").addEventListener("click", e => {
     if (!model) return;
 
     model.rotation.x = 0;
-    rotationSpeedX = 0;
-    enableRotationX = false;
-    document.getElementById("rotationSpeedX").value = 0;
+    rotationSpeedX = 0.01;
+    document.getElementById("rotationSpeedX").value = rotationSpeedX;
 });
 // Fetching rotation speed Y
 document.getElementById("rotationSpeedY").addEventListener("input", e => {
@@ -329,9 +328,8 @@ document.getElementById("resetRotationY").addEventListener("click", e => {
     if (!model) return;
 
     model.rotation.y = 0;
-    rotationSpeedY = 0;
-    enableRotationY = false;
-    document.getElementById("rotationSpeedY").value = 0;
+    rotationSpeedY = 0.01;
+    document.getElementById("rotationSpeedY").value = rotationSpeedY;
 });
 // Fetching rotation speed Z
 document.getElementById("rotationSpeedZ").addEventListener("input", e => {
@@ -348,9 +346,8 @@ document.getElementById("resetRotationZ").addEventListener("click", e => {
     if (!model) return;
 
     model.rotation.z = 0;
-    rotationSpeedZ = 0;
-    enableRotationZ = false;
-    document.getElementById("rotationSpeedZ").value = 0;
+    rotationSpeedZ = 0.01;
+    document.getElementById("rotationSpeedZ").value = rotationSpeedZ;
 });
 // Toggling axes
 document.getElementById("toggleAxes").addEventListener("click", e => {

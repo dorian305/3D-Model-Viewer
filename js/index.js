@@ -415,6 +415,9 @@ perspectiveButtons.forEach(perspectiveButton => {
             bottomView: [0, -cameraOffset.y, 0],
         };
         camera.position.set(btnValue[button.id][0], btnValue[button.id][1], btnValue[button.id][2]);
+
+        // Display updated camera perspective value.
+        cameraSpan.perspective.innerText = button.innerText;
     });
 });
 
@@ -427,6 +430,7 @@ const cameraSpan = {
     y: document.querySelector("#camera-y"),
     z: document.querySelector("#camera-z"),
     zoom: document.querySelector("#camera-zoom"),
+    perspective: document.querySelector("#camera-perspective"),
 
 };
 controls.addEventListener("change", e => {

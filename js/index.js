@@ -366,10 +366,10 @@ document.getElementById("toggleAxes").addEventListener("click", e => {
 const resetCameraBtn = document.getElementById("resetCamera");
 resetCameraBtn.addEventListener("click", e => {
     if (!model) return;
+    
     cameraOffset = fitCameraToObject(camera, model, controls);
-    perspectiveButtons.forEach(button => {
-        button.classList.remove("active");
-    });
+    perspectiveButtons.forEach(button => button.classList.remove("active"));
+    cameraSpan.perspective.innerHTML = "Isometric";
 });
 const perspectiveButtons = document.querySelectorAll(".perspective-button");
 perspectiveButtons.forEach(perspectiveButton => {
@@ -406,13 +406,13 @@ perspectiveButtons.forEach(perspectiveButton => {
          * Setting key value pairs depending on the perspective button clicked.
          */
         const btnValue = {
-            isometricView: [cameraOffset.x, cameraOffset.y, cameraOffset.z],
-            frontView: [0, 0, cameraOffset.z],
-            rearView: [0, 0, -cameraOffset.z],
-            leftView: [-cameraOffset.x, 0, 0],
-            rightView: [cameraOffset.x, 0, 0],
-            topView: [0, cameraOffset.y, 0],
-            bottomView: [0, -cameraOffset.y, 0],
+            isometric: [cameraOffset.x, cameraOffset.y, cameraOffset.z],
+            front: [0, 0, cameraOffset.z],
+            rear: [0, 0, -cameraOffset.z],
+            left: [-cameraOffset.x, 0, 0],
+            right: [cameraOffset.x, 0, 0],
+            top: [0, cameraOffset.y, 0],
+            bottom: [0, -cameraOffset.y, 0],
         };
         camera.position.set(btnValue[button.id][0], btnValue[button.id][1], btnValue[button.id][2]);
 

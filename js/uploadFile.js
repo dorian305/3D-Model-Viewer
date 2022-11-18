@@ -11,25 +11,14 @@ fileField.addEventListener("change", doUpload, false);
  */
 async function doUpload(e){
     /**
-     * Setting error variable.
-     * Used when checking for errors during file upload.
+     * Allowed model extensions to upload.
      */
-    const error = {
-        code: 0,
-        file: "",
-        message: {
-            1: "File extension is not supported. Make sure to only upload files with extensions: .obj, .mtl, .fbx, .stl, .jpg, png",
-            2: "Invalid filename.<br>English - only characters, numbers and [ _-.] are allowed.",
-            3: "No supported model files detected from the list of uploaded files.<br>Supported model files: .obj, .fbx, .stl",
-            4: "Multiple model files detected from the list of uploaded files, please upload one model.",
-            5: "No files have been selected.",
-        },
-    };
-
+    const allowedModelExtensions = ["obj", "fbx",];
+    
     /**
      * Allowed file extensions to upload.
      */
-    const allowedExtensions = ["obj", "mtl", "fbx", "stl", "jpg", "png",];
+    const allowedFileExtensions = [...allowedModelExtensions, "mtl", "jpg", "png",];
 
     /**
      * Counting the number of selected files.
@@ -37,13 +26,28 @@ async function doUpload(e){
     const numberOfFiles = fileField.files.length;
 
     /**
+     * Setting error variable.
+     * Used when checking for errors during file upload.
+     */
+    const error = {
+        code: 0,
+        file: "",
+        message: {
+            1: "File extension is not supported. Make sure to only upload files with extensions: " + allowedFileExtensions.join(", "),
+            2: "Invalid filename.<br>English - only characters, numbers and [ _-.] are allowed.",
+            3: "No supported model files detected from the list of uploaded files.<br>Supported model files: " + allowedModelExtensions.join(", "),
+            4: "Multiple model files detected from the list of uploaded files, please upload one model.",
+            5: "No files have been selected.",
+        },
+    };
+
+    /**
      * Save list of all file names, and list of all model names.
      */
-     const fileList = [];
-     let modelList = [];
+    const fileList = [];
  
      [...fileField.files].forEach(file => fileList.push(file.name));
-     modelList = fileList.filter(file => ["obj", "fbx", "stl"].includes(getExtension(file)[1]));
+    const modelList = fileList.filter(file => allowedModelExtensions.includes(getExtension(file)[1]));
 
     /**
      * Error checking the files before uploading.
@@ -57,7 +61,7 @@ async function doUpload(e){
         /**
          * Checking whether selected files are of allowed extension.
          */;
-         if (error.code === 0 && !allowedExtensions.includes(getExtension(filename)[1])) error.code = 1;
+         if (error.code === 0 && !allowedFileExtensions.includes(getExtension(filename)[1])) error.code = 1;
 
          /**
           * Checking whether selected files are of allowed filename.

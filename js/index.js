@@ -5,7 +5,7 @@ import { OrbitControls } from "OrbitControls";
  */
 import { MTLLoader } from "MTLLoader";
 import { OBJLoader } from "OBJLoader";
-import { STLLoader } from "STLLoader";
+// import { STLLoader } from "STLLoader";
 import { FBXLoader } from "FBXLoader";
 
 /*
@@ -91,9 +91,9 @@ export const loadModel = (filename, id = null) => {
         case "fbx":
             loadFBX();
             break;
-        case "stl":
-            loadSTL();
-            break;
+        // case "stl":
+        //     loadSTL();
+        //     break;
     }
 
     /**
@@ -166,21 +166,21 @@ export const loadModel = (filename, id = null) => {
     /**
      * Loading STL.
      */
-    function loadSTL(){
-        const stlLoader = new STLLoader();
-        stlLoader.load(`../${modelDirectory}/${file}.stl`, object => {
-            const material = object.hasColors ? new THREE.MeshPhongMaterial({opacity: object.alpha, vertexColors: true}) : new THREE.MeshPhongMaterial({color: 0xe5e5e5, specular: 0x111111, shininess: 100});
-            model = new THREE.Mesh(object, material);
-            afterModelLoad();
-        },
-        xhr => {
-            document.getElementById("model-loaded-percentage").innerText = `${(xhr.loaded / xhr.total) * 100}% loaded...`
-        },
-        error => {
-            document.querySelectorAll(".loading").forEach(elem => elem.style.display = "none");
-            console.log(`Error occured: ${error}`);
-        });
-    }
+    // function loadSTL(){
+    //     const stlLoader = new STLLoader();
+    //     stlLoader.load(`../${modelDirectory}/${file}.stl`, object => {
+    //         const material = object.hasColors ? new THREE.MeshPhongMaterial({opacity: object.alpha, vertexColors: true}) : new THREE.MeshPhongMaterial({color: 0xe5e5e5, specular: 0x111111, shininess: 100});
+    //         model = new THREE.Mesh(object, material);
+    //         afterModelLoad();
+    //     },
+    //     xhr => {
+    //         document.getElementById("model-loaded-percentage").innerText = `${(xhr.loaded / xhr.total) * 100}% loaded...`
+    //     },
+    //     error => {
+    //         document.querySelectorAll(".loading").forEach(elem => elem.style.display = "none");
+    //         console.log(`Error occured: ${error}`);
+    //     });
+    // }
 
     function afterModelLoad(){
         // Appending checkbox for each mesh under "Model" section

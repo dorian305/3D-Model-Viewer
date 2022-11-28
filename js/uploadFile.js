@@ -19,16 +19,9 @@ export const doUpload = async (event, uploadedFilesList) => {
     const allowedFileExtensions = [...allowedModelExtensions, "mtl", "jpg", "png",];
 
     /**
-     * Counting the number of selected files.
-     */
-    const numberOfFiles = fileField.files.length;
-
-    /**
      * Setting error variable.
      * Used when checking for errors during file upload.
      */
-    console.log([...fileField.files])
-    console.log(uploadedFilesList)
     const error = {
         code: 0,
         file: "",
@@ -40,11 +33,6 @@ export const doUpload = async (event, uploadedFilesList) => {
             5: "No files have been selected.",
         },
     };
-
-    /**
-     * Allowed file extensions to upload.
-     */
-    const allowedExtensions = ["obj", "mtl", "fbx", "stl", "jpg", "png",];
 
     /**
      * Counting the number of files from fileField if files

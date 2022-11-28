@@ -5,7 +5,7 @@ import { OrbitControls } from "OrbitControls";
  */
 import { MTLLoader } from "MTLLoader";
 import { OBJLoader } from "OBJLoader";
-import { STLLoader } from "STLLoader";
+// import { STLLoader } from "STLLoader";
 import { FBXLoader } from "FBXLoader";
 
 /*
@@ -91,9 +91,9 @@ export const loadModel = (filename, id = null) => {
         case "fbx":
             loadFBX();
             break;
-        case "stl":
-            loadSTL();
-            break;
+        // case "stl":
+        //     loadSTL();
+        //     break;
     }
 
     /**
@@ -166,21 +166,21 @@ export const loadModel = (filename, id = null) => {
     /**
      * Loading STL.
      */
-    function loadSTL(){
-        const stlLoader = new STLLoader();
-        stlLoader.load(`../${modelDirectory}/${file}.stl`, object => {
-            const material = object.hasColors ? new THREE.MeshPhongMaterial({opacity: object.alpha, vertexColors: true}) : new THREE.MeshPhongMaterial({color: 0xe5e5e5, specular: 0x111111, shininess: 100});
-            model = new THREE.Mesh(object, material);
-            afterModelLoad();
-        },
-        xhr => {
-            document.getElementById("model-loaded-percentage").innerText = `${(xhr.loaded / xhr.total) * 100}% loaded...`
-        },
-        error => {
-            document.querySelectorAll(".loading").forEach(elem => elem.style.display = "none");
-            console.log(`Error occured: ${error}`);
-        });
-    }
+    // function loadSTL(){
+    //     const stlLoader = new STLLoader();
+    //     stlLoader.load(`../${modelDirectory}/${file}.stl`, object => {
+    //         const material = object.hasColors ? new THREE.MeshPhongMaterial({opacity: object.alpha, vertexColors: true}) : new THREE.MeshPhongMaterial({color: 0xe5e5e5, specular: 0x111111, shininess: 100});
+    //         model = new THREE.Mesh(object, material);
+    //         afterModelLoad();
+    //     },
+    //     xhr => {
+    //         document.getElementById("model-loaded-percentage").innerText = `${(xhr.loaded / xhr.total) * 100}% loaded...`
+    //     },
+    //     error => {
+    //         document.querySelectorAll(".loading").forEach(elem => elem.style.display = "none");
+    //         console.log(`Error occured: ${error}`);
+    //     });
+    // }
 
     function afterModelLoad(){
         // Appending checkbox for each mesh under "Model" section
@@ -235,6 +235,14 @@ export const loadModel = (filename, id = null) => {
         const modelDOMElement = document.querySelector("#model-list");
         modelDOMElement.innerHTML = "";
         modelDOMElement.insertAdjacentHTML("beforeend",`Name: <a class="model-list-element">${file}.${extension}</a>`);
+
+        /**
+         * SMALL HACK:
+         * Simulate clicking on configuration panel button twice to open it and close
+         * on model load, so the scroll bar of the configuration panel container remains hidden.
+         */
+         cpBtn.click();
+         cpBtn.click();
     }
 }
 
@@ -246,7 +254,7 @@ let enableRotationZ = false;
 let rotationSpeedX = parseFloat(document.getElementById("rotationSpeedX").value);
 let rotationSpeedY = parseFloat(document.getElementById("rotationSpeedX").value);
 let rotationSpeedZ = parseFloat(document.getElementById("rotationSpeedX").value);
-let displayAxes = true;
+let displayAxes = false;
 let cameraOffset = {};
 let edges = [];
 export const moduleWrapper = document.querySelector("#model-viewer-container");
@@ -302,9 +310,8 @@ document.getElementById("resetRotationX").addEventListener("click", e => {
     if (!model) return;
 
     model.rotation.x = 0;
-    rotationSpeedX = 0;
-    enableRotationX = false;
-    document.getElementById("rotationSpeedX").value = 0;
+    rotationSpeedX = 0.01;
+    document.getElementById("rotationSpeedX").value = rotationSpeedX;
 });
 // Fetching rotation speed Y
 document.getElementById("rotationSpeedY").addEventListener("input", e => {
@@ -321,9 +328,8 @@ document.getElementById("resetRotationY").addEventListener("click", e => {
     if (!model) return;
 
     model.rotation.y = 0;
-    rotationSpeedY = 0;
-    enableRotationY = false;
-    document.getElementById("rotationSpeedY").value = 0;
+    rotationSpeedY = 0.01;
+    document.getElementById("rotationSpeedY").value = rotationSpeedY;
 });
 // Fetching rotation speed Z
 document.getElementById("rotationSpeedZ").addEventListener("input", e => {
@@ -340,9 +346,8 @@ document.getElementById("resetRotationZ").addEventListener("click", e => {
     if (!model) return;
 
     model.rotation.z = 0;
-    rotationSpeedZ = 0;
-    enableRotationZ = false;
-    document.getElementById("rotationSpeedZ").value = 0;
+    rotationSpeedZ = 0.01;
+    document.getElementById("rotationSpeedZ").value = rotationSpeedZ;
 });
 // Toggling axes
 document.getElementById("toggleAxes").addEventListener("click", e => {
@@ -358,12 +363,13 @@ document.getElementById("toggleAxes").addEventListener("click", e => {
 /**
  * Resetting perspective camera.
  */
-document.getElementById("resetCamera").addEventListener("click", e => {
+const resetCameraBtn = document.getElementById("resetCamera");
+resetCameraBtn.addEventListener("click", e => {
     if (!model) return;
+    
     cameraOffset = fitCameraToObject(camera, model, controls);
-    perspectiveButtons.forEach(button => {
-        button.classList.remove("active");
-    });
+    perspectiveButtons.forEach(button => button.classList.remove("active"));
+    cameraSpan.perspective.innerHTML = "Isometric";
 });
 const perspectiveButtons = document.querySelectorAll(".perspective-button");
 perspectiveButtons.forEach(perspectiveButton => {
@@ -377,6 +383,11 @@ perspectiveButtons.forEach(perspectiveButton => {
          * Fetching clicked perspective button.
          */
         const button = e.target;
+        
+        /**
+         * Reset camera before changing perspective.
+         */
+        resetCameraBtn.click();
 
         /**
          * Removing active class from all buttons,
@@ -395,15 +406,18 @@ perspectiveButtons.forEach(perspectiveButton => {
          * Setting key value pairs depending on the perspective button clicked.
          */
         const btnValue = {
-            isometricView: [cameraOffset.x, cameraOffset.y, cameraOffset.z],
-            frontView: [0, 0, cameraOffset.z],
-            rearView: [0, 0, -cameraOffset.z],
-            leftView: [-cameraOffset.x, 0, 0],
-            rightView: [cameraOffset.x, 0, 0],
-            topView: [0, cameraOffset.y, 0],
-            bottomView: [0, -cameraOffset.y, 0],
+            isometric: [cameraOffset.x, cameraOffset.y, cameraOffset.z],
+            front: [0, 0, cameraOffset.z],
+            rear: [0, 0, -cameraOffset.z],
+            left: [-cameraOffset.x, 0, 0],
+            right: [cameraOffset.x, 0, 0],
+            top: [0, cameraOffset.y, 0],
+            bottom: [0, -cameraOffset.y, 0],
         };
         camera.position.set(btnValue[button.id][0], btnValue[button.id][1], btnValue[button.id][2]);
+
+        // Display updated camera perspective value.
+        cameraSpan.perspective.innerText = button.innerText;
     });
 });
 
@@ -416,6 +430,7 @@ const cameraSpan = {
     y: document.querySelector("#camera-y"),
     z: document.querySelector("#camera-z"),
     zoom: document.querySelector("#camera-zoom"),
+    perspective: document.querySelector("#camera-perspective"),
 
 };
 controls.addEventListener("change", e => {
@@ -430,22 +445,28 @@ controls.addEventListener("change", e => {
 */
 // Toggle CP visibility
 const cp = document.getElementById("configuration-panel-container");
-document.getElementById("toggle-configuration-panel-btn").addEventListener("click", e => {
-    const btn = e.target;
+const cpBtn = document.getElementById("toggle-configuration-panel-btn")
+cpBtn.addEventListener("click", e => {
+    const style = {
+        hidden: {
+            cpLeft: -cp.clientWidth,
+            cpBtnRight: -cpBtn.clientWidth,
+            cpBtnText: `>>`,
+        },
+        visible: {
+            cpLeft: 0,
+            cpBtnRight: 0,
+            cpBtnText: `<<`,
+        },
+    }
 
-    // Hide panel
-    if (parseInt(window.getComputedStyle(cp).getPropertyValue("left")) === 0){
-        cp.style.left = `${-cp.clientWidth}px`;
-        btn.innerText = ">>";
-        btn.style.right = `${-btn.clientWidth}px`;
-    }
-    
-    // Show panel
-    else {
-        cp.style.left = `0px`;
-        btn.innerText = "<<";
-        btn.style.right = `0px`;
-    }
+    // Setting container attribute to visible or hidden
+    cp.setAttribute("data-visibility", parseInt(window.getComputedStyle(cp).getPropertyValue("left")) === 0 ? "hidden": "visible");
+
+    // Toggling CP
+    cp.style.left = `${ style[cp.getAttribute("data-visibility")].cpLeft }px`;
+    cpBtn.innerText = `${ style[cp.getAttribute("data-visibility")].cpBtnText }`;
+    cpBtn.style.right = `${ style[cp.getAttribute("data-visibility")].cpBtnRight }px`;
 });
 
 // Toggle wireframe

@@ -1,5 +1,6 @@
 import { loadModel } from "./index.js";
 import { getExtension } from "./index.js";
+import { customClass } from "./swalCustomClass.js";
 
 const fileField = document.querySelector("#files");
 
@@ -7,6 +8,21 @@ const fileField = document.querySelector("#files");
  * Function which prepares files for upload.
  */
 export const doUpload = async (event, uploadedFilesList) => {
+    /**
+     * Allowed model extensions to upload.
+     */
+    const allowedModelExtensions = ["obj", "fbx",];
+    
+    /**
+     * Allowed file extensions to upload.
+     */
+    const allowedFileExtensions = [...allowedModelExtensions, "mtl", "jpg", "png",];
+
+    /**
+     * Counting the number of selected files.
+     */
+    const numberOfFiles = fileField.files.length;
+
     /**
      * Setting error variable.
      * Used when checking for errors during file upload.
@@ -17,9 +33,9 @@ export const doUpload = async (event, uploadedFilesList) => {
         code: 0,
         file: "",
         message: {
-            1: "File extension is not supported. Make sure to only upload files with extensions: .obj, .mtl, .fbx, .stl, .jpg, png",
+            1: "File extension is not supported. Make sure to only upload files with extensions: " + allowedFileExtensions.join(", "),
             2: "Invalid filename.<br>English - only characters, numbers and [ _-.] are allowed.",
-            3: "No supported model files detected from the list of uploaded files.<br>Supported model files: .obj, .fbx, .stl",
+            3: "No supported model files detected from the list of uploaded files.<br>Supported model files: " + allowedModelExtensions.join(", "),
             4: "Multiple model files detected from the list of uploaded files, please upload one model.",
             5: "No files have been selected.",
         },
@@ -58,7 +74,7 @@ export const doUpload = async (event, uploadedFilesList) => {
         /**
          * Checking whether selected files are of allowed extension.
          */;
-         if (error.code === 0 && !allowedExtensions.includes(getExtension(filename)[1])) error.code = 1;
+         if (error.code === 0 && !allowedFileExtensions.includes(getExtension(filename)[1])) error.code = 1;
 
          /**
           * Checking whether selected files are of allowed filename.
@@ -92,8 +108,9 @@ export const doUpload = async (event, uploadedFilesList) => {
     if (error.code !== 0){
         Swal.fire({
             title: `ERROR ${error.code}`,
-            html: `${error.message[error.code]}${error.file ? `<br>Error file: ${error.file}` : ""}`,
+            html: `${error.message[error.code]}${error.file ? `<br><strong>Error file:</strong> ${error.file}` : ""}`,
             icon: "error",
+            customClass : customClass,
         });
 
         return;
@@ -105,6 +122,7 @@ export const doUpload = async (event, uploadedFilesList) => {
     Swal.fire({
         title: `Uploading...`,
         html: `<div id="swal-upload-html"></div>`,
+        customClass : customClass,
     });
     Swal.showLoading(); // Display loading icon.
     for (let i = 0; i < numberOfFiles; i++){
@@ -125,8 +143,9 @@ export const doUpload = async (event, uploadedFilesList) => {
         if (response.error_code !== 0){
             Swal.fire({
                 title: `ERROR ${response.error_code}`,
-                html: `${response.error_message}<br>Error file: ${response.file}`,
+                html: `${response.error_message}<br><strong>Error file:</strong> ${response.file}`,
                 icon: "error",
+                customClass : customClass,
             });
             return;
         }
@@ -178,8 +197,9 @@ export const uploadFile = async file => {
         catch (e) {
             Swal.fire({
                 title: `An error occured`,
-                html: `Error: ${e}.<br>Error file: ${file.name}`,
+                html: `Error: ${e}.<br><strong>Error file:</strong> ${file.name}`,
                 icon: "error",
+                customClass : customClass,
             });
         }
     });

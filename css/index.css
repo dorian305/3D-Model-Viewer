@@ -82,7 +82,7 @@ div#model-viewer-container div#configuration-panel-container {
     position: absolute;
     z-index: 10;
     top: 0;
-    left: 0;
+    left: -350px;
     height: 100%;
     background-color: #1f2126;
 }
@@ -108,7 +108,7 @@ div#model-viewer-container div#toggle-configuration-panel-btn {
     height: 50px;
     position: absolute;
     top: 0;
-    right: 0;
+    right: -50px;
     background-color: #3375c7;
     cursor: pointer;
     display: flex;

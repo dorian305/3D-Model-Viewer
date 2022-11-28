@@ -3,16 +3,16 @@ import { getExtension } from "./index.js";
 
 const fileField = document.querySelector("#files");
 
-fileField.addEventListener("change", doUpload, false);
-
 /**
  * Function which prepares files for upload.
  */
-async function doUpload(e){
+export const doUpload = async (event, uploadedFilesList) => {
     /**
      * Setting error variable.
      * Used when checking for errors during file upload.
      */
+    console.log([...fileField.files])
+    console.log(uploadedFilesList)
     const error = {
         code: 0,
         file: "",
@@ -31,18 +31,20 @@ async function doUpload(e){
     const allowedExtensions = ["obj", "mtl", "fbx", "stl", "jpg", "png",];
 
     /**
-     * Counting the number of selected files.
+     * Counting the number of files from fileField if files
+     * are uploaded through the input, or uploadedFilesList if files are drag and dropped.
      */
-    const numberOfFiles = fileField.files.length;
+    const numberOfFiles = uploadedFilesList ? uploadedFilesList.length : fileField.files.length;
 
     /**
      * Save list of all file names, and list of all model names.
      */
-     const fileList = [];
-     let modelList = [];
- 
-     [...fileField.files].forEach(file => fileList.push(file.name));
-     modelList = fileList.filter(file => ["obj", "fbx", "stl"].includes(getExtension(file)[1]));
+    const list = uploadedFilesList ?? [...fileField.files];
+    const fileList = [];
+    let modelList = [];
+
+    list.forEach(file => fileList.push(file.name));
+    modelList = fileList.filter(file => ["obj", "fbx", "stl"].includes(getExtension(file)[1]));
 
     /**
      * Error checking the files before uploading.
@@ -109,12 +111,12 @@ async function doUpload(e){
         /**
          * Display current file uploading message.
          */
-        document.querySelector(`#swal-upload-html`).innerText = `Uploading ${fileField.files[i].name} (${i + 1} of ${numberOfFiles})`;
+        document.querySelector(`#swal-upload-html`).innerText = `Uploading ${list[i].name} (${i + 1} of ${numberOfFiles})`;
 
         /**
          * Send file to be uploaded.
          */
-        const response = await uploadFile(fileField.files[i]);
+        const response = await uploadFile(list[i]);
 
         /**
          * If there was an error uploading a file,
@@ -154,10 +156,9 @@ async function doUpload(e){
 /**
  * Uploading file to the server.
  */
-async function uploadFile(file){
+export const uploadFile = async file => {
     /**
-     * Constructing a Form Data to send to the backend,
-     * so the PHP populates $_FILES properly.
+     * Populating form with uploaded file.
      */
     const form = new FormData();
     form.append("file", file);
@@ -172,7 +173,9 @@ async function uploadFile(file){
     }).then(response => {
         try {
             return response.json();
-        } catch (e) {
+        }
+
+        catch (e) {
             Swal.fire({
                 title: `An error occured`,
                 html: `Error: ${e}.<br>Error file: ${file.name}`,
@@ -183,3 +186,5 @@ async function uploadFile(file){
 
     return data;
 }
+
+fileField.addEventListener("change", doUpload);

@@ -268,6 +268,21 @@ div#model-viewer-container .lds-ripple div:nth-child(2) {
     animation-delay: -0.5s;
 }
 
+div#drag-indicator-elem {
+    position: absolute;
+    z-index: 1000000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1d1f32;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Sans', sans-serif;
+    color: #646991;
+}
+
 @keyframes lds-ripple {
     0% {
         top: 36px;

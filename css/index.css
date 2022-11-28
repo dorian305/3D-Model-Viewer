@@ -13,10 +13,9 @@ div#model-viewer-container h1, h2, h3, h4, h5 {
 
 div#model-viewer-container #splash {
     position: absolute;
+    width: 100%;
+    height: 100%;
     z-index: 1;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
     display: flex;
     flex-flow: column;
     align-items: center;
@@ -267,6 +266,21 @@ div#model-viewer-container .lds-ripple div {
 
 div#model-viewer-container .lds-ripple div:nth-child(2) {
     animation-delay: -0.5s;
+}
+
+div#drag-indicator-elem {
+    position: absolute;
+    z-index: 1000000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1d1f32;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Sans', sans-serif;
+    color: #646991;
 }
 
 @keyframes lds-ripple {

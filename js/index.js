@@ -257,7 +257,7 @@ let rotationSpeedZ = parseFloat(document.getElementById("rotationSpeedX").value)
 let displayAxes = false;
 let cameraOffset = {};
 let edges = [];
-const moduleWrapper = document.querySelector("#model-viewer-container");
+export const moduleWrapper = document.querySelector("#model-viewer-container");
 
 /*
     Setting up the scenery

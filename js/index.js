@@ -67,7 +67,7 @@ export const loadModel = (filename, id = null) => {
     const modelDirectory = id ? `example-models` : `upload-temp`;
 
     // Hiding splash screen and displaying loading model.
-    document.querySelector("#splash")?.remove();
+    splashScreen?.remove();
     document.querySelector("#loading-model").style.display = "";
 
     /**
@@ -258,6 +258,7 @@ let displayAxes = false;
 let cameraOffset = {};
 let edges = [];
 export const moduleWrapper = document.querySelector("#model-viewer-container");
+export const splashScreen = document.querySelector("#splash");
 
 /*
     Setting up the scenery

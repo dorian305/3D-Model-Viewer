@@ -1,4 +1,5 @@
 import { moduleWrapper } from './index.js';
+import { splashScreen } from './index.js';
 import { doUpload } from './uploadFile.js';
 
 const dragIndicatorDiv = document.querySelector("#drag-indicator-elem");
@@ -54,3 +55,8 @@ dragIndicatorDiv.addEventListener("dragover", e => e.preventDefault());
  * Display drop zone for file upload when files get dragged into the window.
  */
 moduleWrapper.addEventListener("dragenter", e => dragIndicatorDiv.removeAttribute("style"));
+
+/**
+ * Preventing text selection dragging, so it doesn't trigger the drag and drop functionality.
+ */
+window.addEventListener("mousedown", e => window.getSelection().removeAllRanges());

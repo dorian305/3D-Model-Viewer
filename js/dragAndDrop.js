@@ -60,3 +60,4 @@ moduleWrapper.addEventListener("dragenter", e => dragIndicatorDiv.removeAttribut
  * Preventing text selection dragging, so it doesn't trigger the drag and drop functionality.
  */
 window.addEventListener("mousedown", e => window.getSelection().removeAllRanges());
+window.addEventListener("touchstart", e => window.getSelection().removeAllRanges());

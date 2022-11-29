@@ -146,21 +146,22 @@
             <hr>
         </div>
         <div id="splash">
-            <h1>Upload the model</h1>
-            <p>(currently supports OBJ, FBX)</p>
+            <div id="splash-header-wrapper">
+                Select or drag and drop model files here.<br>
+                Supports <strong>obj</strong> and <strong>fbx</strong> model formats.
+            </div>
 
             <!-- MODEL UPLOAD -->
             <form enctype="multipart/form-data">
                 <input id="files" type="file" name="file" multiple>
             </form>
             
-            <h2>Example models:</h2>
-            <p>
-                <a id="example-car" class="example-model" data-model="example-car.obj">Car</a><!--
-             --><a id="example-plane" class="example-model" data-model="11803_Airplane_v1_l1.obj">Plane</a><!--
-             --><a id="example-building" class="example-model" data-model="building_04.obj">Building</a>
-            </p>
-
+            <div id="example-models-wrapper">
+                Example models:<br>
+                    <a id="example-car" class="example-model" data-model="example-car.obj">Car</a><!--
+                --><a id="example-plane" class="example-model" data-model="11803_Airplane_v1_l1.obj">Plane</a><!--
+                --><a id="example-building" class="example-model" data-model="building_04.obj">Building</a>
+            </div>
         </div>
         <div id="loading-model" style="display: none">
             <div class="lds-ripple"><div></div><div></div></div>

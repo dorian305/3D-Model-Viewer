@@ -59,6 +59,8 @@ export const fitCameraToObject = (camera, object, orbitControls, offset) => {
     Loading model
 */
 export const loadModel = (filename, id = null) => {
+    clearScene();
+
     /**
      * If id argument is defined, then the example model has been clicked.
      * Set the folder to load resources from to: `example-models`.
@@ -278,9 +280,7 @@ renderer.domElement.id = "threejs-canvas";
 scene.add(ambientLight);
 scene.add(camera);
 scene.background = new THREE.Color(document.getElementById("enviroment-color").value);
-if (displayAxes){
-    scene.add(axes);
-}
+
 // Rendering
 const animate = () => {
     requestAnimationFrame(animate);
@@ -630,4 +630,27 @@ export const getModelInformation = object => {
     });
 
     return [vertices, triangles];
+}
+
+/**
+ * Clearing and preparing scenery for model load.
+ */
+const clearScene = () => {
+    if (!(model instanceof THREE.Object3D)) return false;
+
+    // for better memory management and performance
+    if (model.geometry) model.geometry.dispose();
+
+    if (model.material) {
+        if (model.material instanceof Array) {
+            // for better memory management and performance
+            model.material.forEach(material => material.dispose());
+        } else {
+            // for better memory management and performance
+            model.material.dispose();
+        }
+    }
+    model.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
+
+    scene.remove(axes);
 }

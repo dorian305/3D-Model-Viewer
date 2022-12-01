@@ -1,5 +1,5 @@
 import { moduleWrapper } from './index.js';
-import { splashScreen } from './index.js';
+import {  } from './index.js';
 import { doUpload } from './uploadFile.js';
 
 const dragIndicatorDiv = document.querySelector("#drag-indicator-elem");
